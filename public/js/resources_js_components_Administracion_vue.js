@@ -58,7 +58,7 @@ var render = function render() {
   }, [_c("div", {
     staticClass: "block"
   }, [_c("div", {
-    staticClass: "columns is-multiline"
+    staticClass: "columns is-multiline is-centered"
   }, [_c("div", {
     staticClass: "column is-one-fifth"
   }, [_c("div", {
@@ -107,19 +107,7 @@ var render = function render() {
         return _vm.$router.push("anuncios");
       }
     }
-  }, [_vm._m(7), _vm._v(" "), _vm._m(8)])]), _vm._v(" "), _c("div", {
-    staticClass: "column is-one-fifth"
-  }, [_c("div", {
-    staticClass: "card",
-    staticStyle: {
-      cursor: "pointer"
-    },
-    on: {
-      click: function click($event) {
-        return _vm.$router.push("contacto");
-      }
-    }
-  }, [_vm._m(9), _vm._v(" "), _vm._m(10)])])])])])]);
+  }, [_vm._m(7), _vm._v(" "), _vm._m(8)])])])])])]);
 };
 
 var staticRenderFns = [function () {
@@ -231,31 +219,6 @@ var staticRenderFns = [function () {
   }, [_c("p", {
     staticClass: "Title"
   }, [_vm._v("Anuncios")])])]);
-}, function () {
-  var _vm = this,
-      _c = _vm._self._c;
-
-  return _c("div", {
-    staticClass: "card-image"
-  }, [_c("figure", {
-    staticClass: "image is-4by3"
-  }, [_c("img", {
-    attrs: {
-      src: "https://bulma.io/images/placeholders/1280x960.png",
-      alt: "Placeholder image"
-    }
-  })])]);
-}, function () {
-  var _vm = this,
-      _c = _vm._self._c;
-
-  return _c("div", {
-    staticClass: "card-content"
-  }, [_c("div", {
-    staticClass: "content has-text-centered"
-  }, [_c("p", {
-    staticClass: "Title"
-  }, [_vm._v("Clientes Satisfechos")])])]);
 }];
 render._withStripped = true;
 

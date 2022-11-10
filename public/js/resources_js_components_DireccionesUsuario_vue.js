@@ -45,7 +45,7 @@ __webpack_require__.r(__webpack_exports__);
         var resp = data.respuesta;
         console.log(resp);
 
-        _this.$buefy.dialog.alert("Categoría editada correctamente");
+        _this.$buefy.dialog.alert("Dirección guardada correctamente");
 
         _this.$store.dispatch("setCurrentUser", _this.currentUser);
       });

@@ -97,7 +97,7 @@
           </b-table-column>
           <b-table-column
             v-slot="props"
-            label="Descuento"
+            label="% Descuento"
             field="descuento"
             searchable
           >
@@ -220,6 +220,18 @@
               </div>
             </div>
 
+            <div class="columns" v-if="producto.estado=='2'">
+              <div class="column">
+                <b-field horizontal label="Porcentaje de Descuento">
+                  <b-numberinput
+                    step="1"
+                    :min="0" :max="95"
+                    v-model="producto.descuento">
+                  </b-numberinput>
+                </b-field>
+              </div>
+            </div>
+
             <div class="columns">
               <div class="column">
                 <b-field horizontal label="Categoría">
@@ -249,6 +261,19 @@
                 </b-field>
               </div>
             </div>
+
+            <div class="columns">
+              <div class="column">
+                <b-field horizontal label="Existencias" v-if="producto.tipo==0" >
+                    <b-numberinput
+                    step="1"
+                    :min="0"
+                    v-model="producto.existencias">
+                  </b-numberinput>
+                </b-field>
+              </div>
+            </div>
+
 
             <div class="columns" v-if="producto.tipo==0 || producto.tipo==3">
               <div class="column">
@@ -308,10 +333,11 @@
 
                         </b-field>
                         <b-field horizontal label="Existencias" >
-                            <b-input v-model="caracteristica.existencias"></b-input>
-                        </b-field>
-                        <b-field horizontal label="Tipo">
-                            <b-input v-model="caracteristica.tipo"></b-input>
+                            <b-numberinput
+                                step="1"
+                                :min="0"
+                                v-model="caracteristica.existencias">
+                            </b-numberinput>
                         </b-field>
                         <hr>
                     </form>
@@ -351,12 +377,14 @@
                             dropText="Soltar archivo"
                             ></vue-upload-multiple-image>
                         </b-field>
-                        <b-field horizontal label="Existencias" >
-                            <b-input v-model="caracteristica.existencias"></b-input>
-                        </b-field>
-                        <b-field horizontal label="Tipo">
-                            <b-input v-model="caracteristica.tipo"></b-input>
-                        </b-field>
+                        <!-- <b-field horizontal label="Existencias" >
+                            <b-numberinput
+                                step="1"
+                                :min="0"
+                                v-model="caracteristica.existencias">
+                            </b-numberinput>
+                        </b-field> -->
+
                         <div class="columns">
                             <div class="column">
                                 <p class="has-text-centered title">Tamaños Característica</p>
@@ -385,7 +413,12 @@
                                         <p>Tamaño: {{getTamDescripcionById(tamCaracteristica.idTamanio)}}</p>
                                     </b-field>
                                     <b-field horizontal label="Existencias">
-                                        <b-input v-model="tamCaracteristica.existencias"></b-input>
+                                        <b-numberinput
+                                            step="1"
+                                            :min="0"
+                                            v-model="tamCaracteristica.existencias">
+                                        </b-numberinput>
+
                                     </b-field>
 
                                 </div>
@@ -523,6 +556,7 @@ export default {
       showModalCreateEdit: false,
       isEdit:false,
       isAdd:false,
+      auxImages:[],
       producto:{
             id: 0,
 			codigo: "",
@@ -630,7 +664,12 @@ export default {
     },
     doneDeleteImgCar(index,caracteristica)
     {
-        caracteristica.images.splice(index,1)
+
+        console.log("🚀 ~ file: Productos.vue ~ line 634 ~ this.producto", this.producto)
+        console.log("🚀 ~ file: Productos.vue ~ line 632 ~ caracteristica", caracteristica)
+        console.log("🚀 ~ file: Productos.vue ~ line 632 ~ index", index)
+
+        let resultSplice=caracteristica.images.splice(index,1)
         caracteristica.urlFoto=""
         caracteristica.images.forEach(element => {
             caracteristica.urlFoto=caracteristica.urlFoto+element.path+";"
@@ -795,8 +834,8 @@ export default {
                 color:"#FFFFFF",
                 colorObj:"#FFFFFF",
                 urlFoto:"",
-                existencias:"",
-                tipo:"",
+                existencias:0,
+                tipo:0,
                 idProducto:0,
                 isActive:1,
                 tamanios_caracteristica:[],
@@ -969,14 +1008,69 @@ export default {
             if (data) {
               this.producto = data.respuesta;
 
-              this.producto.caracteristicas_producto.forEach(element => {
+            //   this.producto = new Vue({
+            //     data: data.respuesta
+            //     })
+
+              if(this.producto.tipo==0 || this.producto.tipo==3)
+              {
+                this.images= []
+                let arrayImgsProd = this.producto.urlsFotos.split(";");
+                arrayImgsProd.pop();
+                arrayImgsProd.forEach((value, index) => {
+                    let newImage={
+                        path:value,
+                        default:index,
+                        highlight:1,
+                        caption:""
+                    }
+                    this.images.push(newImage)
+
+                    //////
+                    // let newImage={
+                    //     path:response.data.respuesta.url,
+                    //     default:index+5,
+                    //     highlight:1,
+                    //     caption:""
+                    // }
+
+                    // caracteristica.images.push(newImage)
+                    // caracteristica.urlFoto=""
+                    // caracteristica.images.forEach(element => {
+                    //     caracteristica.urlFoto=caracteristica.urlFoto+element.path+";"
+                    // });
+                    //////
+                });
+              }
+
+              if(this.producto.tipo==1 || this.producto.tipo==2)
+              {
+                this.producto.caracteristicas_producto.forEach(element => {
                 element.colorObj=element.color
                 element.filteredTags=this.tablaTamanios
                 element.tags=[]
                 element.tamanios_caracteristica.forEach(tamCar => {
                     element.tags.push(tamCar.tamanio)
                 });
+                Vue.set(element,'images',[])
+                // element.images=[]
+
+                let arrayImgs = element.urlFoto.split(";");
+                arrayImgs.pop();
+                arrayImgs.forEach((value, index) => {
+                    let newImage={
+                        path:value,
+                        default:index,
+                        highlight:1,
+                        caption:""
+                    }
+
+                    element.images.push(newImage)
+                });
               });
+              }
+
+
 
               this.producto.tamanios_producto.forEach(tamProd => {
                     this.tags.push(tamProd.tamanio)

@@ -1,7 +1,84 @@
 <template>
-    <div>
-        <h1 class="title">Pedidos</h1>
-        <div class="container" v-for="pedido,index in tablaPedidos" :key="index">
+    <div style="padding-bottom: 5em;">
+
+        <div class="mt-3 p-4">
+            <h1 class="title">Pedidos</h1>
+            <div class="block">
+                <div class="columns">
+                <div class="column">
+
+                    <b-table
+                    :data="tablaPedidos"
+                    :bordered="true"
+                    :striped="false"
+                    :hoverable="false"
+                    :loading="false"
+                    :focusable="false"
+                    :mobile-cards="true"
+                    :paginated="true"
+                    :per-page="5"
+                    >
+
+                    <b-table-column
+                        v-slot="props"
+                        label="Cliente"
+                        field="user"
+                        class="is-vcentered"
+                        centered
+                    >
+                        <p>{{ props.row.user.nombres +" "+props.row.user.apellidos }}</p>
+                        <!-- <p></p> -->
+
+                    </b-table-column>
+                    <b-table-column
+                        v-slot="props"
+                        label="Fecha Pedido"
+                        field="producto.descripcionCorta"
+                        class="is-vcentered"
+                        centered
+                    >
+                        {{ props.row.fechaOrden }}
+
+                    </b-table-column>
+                    <b-table-column
+                        v-slot="props"
+                        label="Estado"
+                        field="producto.descripcionCorta"
+                        class="is-vcentered"
+                        centered
+                    >
+                        {{ props.row.estadoOrden==1?"Entregado":"No entregado" }}
+
+                    </b-table-column>
+                    <b-table-column
+                        v-slot="props"
+                        label="Valor Total"
+                        field="precio"
+                        centered
+                    >
+                        ${{ props.row.valorTotal.toFixed(2) }}
+                    </b-table-column>
+
+
+                    <b-table-column field="actions" label="Acciones" v-slot="props">
+                        <div class="buttons">
+                        <b-button
+                            rounded
+                            type="is-primary"
+                            icon-left="eye"
+                            @click="verPedido(props.row.id)"
+                        >
+                        </b-button>
+                        </div>
+                    </b-table-column>
+                    </b-table>
+
+                </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- <div class="container" v-for="pedido,index in tablaPedidos" :key="index">
             <div class="block">
                 <div class="columns">
                 <div class="column">
@@ -10,16 +87,12 @@
                         <p class="subtitle">Fecha: {{pedido.fechaOrden}}</p>
                         <p class="subtitle">Estado: {{pedido.estadoOrden==1?"Entregado":"No entregado"}}</p>
                         <p class="subtitle">Valor Total: {{pedido.valorTotal}}</p>
-                        <!-- <p class="subtitle">Precio: {{registroProducto.producto.precio}}</p>
-                        <p class="subtitle">Cantidad: {{registroProducto.cantidad}}</p>
-                        <p class="subtitle">Descripción: {{registroProducto.producto.descripcionCorta}}</p> -->
-                        <!-- <p v-if="registroProducto.tipoRegistro==1" class="subtitle">Color: {{registroProducto.producto.caracteristicas_producto[registroProducto.idCaracteristica].color}}</p> -->
                     </div>
 
                 </div>
                 </div>
             </div>
-        </div>
+        </div> -->
     </div>
 </template>
 
@@ -34,7 +107,7 @@ export default {
     },
     mounted()
     {
-        this.fetchOrdenesByUserId()
+        this.fetchOrdenes()
     },
     computed:{
         authenticated() {
@@ -53,7 +126,7 @@ export default {
             console.log("🚀 ~ file: PedidosUsuario.vue ~ line 55 ~ id", id)
             this.$router.push("/pedidos/"+id)
         },
-        fetchOrdenesByUserId()
+        fetchOrdenes()
         {
             try {
                 fetch(process.env.MIX_API_URL+"api/ordenes", {

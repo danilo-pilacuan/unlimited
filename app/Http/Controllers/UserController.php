@@ -71,11 +71,26 @@ class UserController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request,User $user)
+    public function update(Request $request, $id)
     {
-        //
+        $usuario=User::find($id);
+        if($usuario)
+        {
+            $usuario->UrlFoto=$request->urlFoto;
+            $usuario->save();
+            $usuario=User::find($id);
+            //$usuario->fill($request->post())->save();
+            return response()->json([
+                "respuesta"=>$usuario
+            ]);
+        }
+        else
+        {
+            return response()->json([
+                "resultado"=>"fail"
+            ]);
+        }
     }
-
     /**
      * Remove the specified resource from storage.
      *

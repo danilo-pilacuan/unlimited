@@ -31,6 +31,7 @@ __webpack_require__.r(__webpack_exports__);
       showModalCreateEdit: false,
       isEdit: false,
       isAdd: false,
+      auxImages: [],
       producto: {
         id: 0,
         codigo: "",
@@ -140,7 +141,10 @@ __webpack_require__.r(__webpack_exports__);
       });
     },
     doneDeleteImgCar: function doneDeleteImgCar(index, caracteristica) {
-      caracteristica.images.splice(index, 1);
+      console.log("🚀 ~ file: Productos.vue ~ line 634 ~ this.producto", this.producto);
+      console.log("🚀 ~ file: Productos.vue ~ line 632 ~ caracteristica", caracteristica);
+      console.log("🚀 ~ file: Productos.vue ~ line 632 ~ index", index);
+      var resultSplice = caracteristica.images.splice(index, 1);
       caracteristica.urlFoto = "";
       caracteristica.images.forEach(function (element) {
         caracteristica.urlFoto = caracteristica.urlFoto + element.path + ";";
@@ -277,8 +281,8 @@ __webpack_require__.r(__webpack_exports__);
         color: "#FFFFFF",
         colorObj: "#FFFFFF",
         urlFoto: "",
-        existencias: "",
-        tipo: "",
+        existencias: 0,
+        tipo: 0,
         idProducto: 0,
         isActive: 1,
         tamanios_caracteristica: [],
@@ -454,16 +458,64 @@ __webpack_require__.r(__webpack_exports__);
           var resp = data;
 
           if (data) {
-            _this8.producto = data.respuesta;
+            _this8.producto = data.respuesta; //   this.producto = new Vue({
+            //     data: data.respuesta
+            //     })
 
-            _this8.producto.caracteristicas_producto.forEach(function (element) {
-              element.colorObj = element.color;
-              element.filteredTags = _this8.tablaTamanios;
-              element.tags = [];
-              element.tamanios_caracteristica.forEach(function (tamCar) {
-                element.tags.push(tamCar.tamanio);
+            if (_this8.producto.tipo == 0 || _this8.producto.tipo == 3) {
+              _this8.images = [];
+
+              var arrayImgsProd = _this8.producto.urlsFotos.split(";");
+
+              arrayImgsProd.pop();
+              arrayImgsProd.forEach(function (value, index) {
+                var newImage = {
+                  path: value,
+                  "default": index,
+                  highlight: 1,
+                  caption: ""
+                };
+
+                _this8.images.push(newImage); //////
+                // let newImage={
+                //     path:response.data.respuesta.url,
+                //     default:index+5,
+                //     highlight:1,
+                //     caption:""
+                // }
+                // caracteristica.images.push(newImage)
+                // caracteristica.urlFoto=""
+                // caracteristica.images.forEach(element => {
+                //     caracteristica.urlFoto=caracteristica.urlFoto+element.path+";"
+                // });
+                //////
+
               });
-            });
+            }
+
+            if (_this8.producto.tipo == 1 || _this8.producto.tipo == 2) {
+              _this8.producto.caracteristicas_producto.forEach(function (element) {
+                element.colorObj = element.color;
+                element.filteredTags = _this8.tablaTamanios;
+                element.tags = [];
+                element.tamanios_caracteristica.forEach(function (tamCar) {
+                  element.tags.push(tamCar.tamanio);
+                });
+                Vue.set(element, 'images', []); // element.images=[]
+
+                var arrayImgs = element.urlFoto.split(";");
+                arrayImgs.pop();
+                arrayImgs.forEach(function (value, index) {
+                  var newImage = {
+                    path: value,
+                    "default": index,
+                    highlight: 1,
+                    caption: ""
+                  };
+                  element.images.push(newImage);
+                });
+              });
+            }
 
             _this8.producto.tamanios_producto.forEach(function (tamProd) {
               _this8.tags.push(tamProd.tamanio);
@@ -683,7 +735,7 @@ var render = function render() {
     }])
   }), _vm._v(" "), _c("b-table-column", {
     attrs: {
-      label: "Descuento",
+      label: "% Descuento",
       field: "descuento",
       searchable: ""
     },
@@ -919,7 +971,29 @@ var render = function render() {
     attrs: {
       value: "2"
     }
-  }, [_vm._v("Con Descuento")])])], 1)], 1)]), _vm._v(" "), _c("div", {
+  }, [_vm._v("Con Descuento")])])], 1)], 1)]), _vm._v(" "), _vm.producto.estado == "2" ? _c("div", {
+    staticClass: "columns"
+  }, [_c("div", {
+    staticClass: "column"
+  }, [_c("b-field", {
+    attrs: {
+      horizontal: "",
+      label: "Porcentaje de Descuento"
+    }
+  }, [_c("b-numberinput", {
+    attrs: {
+      step: "1",
+      min: 0,
+      max: 95
+    },
+    model: {
+      value: _vm.producto.descuento,
+      callback: function callback($$v) {
+        _vm.$set(_vm.producto, "descuento", $$v);
+      },
+      expression: "producto.descuento"
+    }
+  })], 1)], 1)]) : _vm._e(), _vm._v(" "), _c("div", {
     staticClass: "columns"
   }, [_c("div", {
     staticClass: "column"
@@ -982,7 +1056,28 @@ var render = function render() {
     attrs: {
       value: "3"
     }
-  }, [_vm._v("Producto con tamaños")])])], 1)], 1)]), _vm._v(" "), _vm.producto.tipo == 0 || _vm.producto.tipo == 3 ? _c("div", {
+  }, [_vm._v("Producto con tamaños")])])], 1)], 1)]), _vm._v(" "), _c("div", {
+    staticClass: "columns"
+  }, [_c("div", {
+    staticClass: "column"
+  }, [_vm.producto.tipo == 0 ? _c("b-field", {
+    attrs: {
+      horizontal: "",
+      label: "Existencias"
+    }
+  }, [_c("b-numberinput", {
+    attrs: {
+      step: "1",
+      min: 0
+    },
+    model: {
+      value: _vm.producto.existencias,
+      callback: function callback($$v) {
+        _vm.$set(_vm.producto, "existencias", $$v);
+      },
+      expression: "producto.existencias"
+    }
+  })], 1) : _vm._e()], 1)]), _vm._v(" "), _vm.producto.tipo == 0 || _vm.producto.tipo == 3 ? _c("div", {
     staticClass: "columns"
   }, [_c("div", {
     staticClass: "column"
@@ -1109,26 +1204,17 @@ var render = function render() {
         horizontal: "",
         label: "Existencias"
       }
-    }, [_c("b-input", {
+    }, [_c("b-numberinput", {
+      attrs: {
+        step: "1",
+        min: 0
+      },
       model: {
         value: caracteristica.existencias,
         callback: function callback($$v) {
           _vm.$set(caracteristica, "existencias", $$v);
         },
         expression: "caracteristica.existencias"
-      }
-    })], 1), _vm._v(" "), _c("b-field", {
-      attrs: {
-        horizontal: "",
-        label: "Tipo"
-      }
-    }, [_c("b-input", {
-      model: {
-        value: caracteristica.tipo,
-        callback: function callback($$v) {
-          _vm.$set(caracteristica, "tipo", $$v);
-        },
-        expression: "caracteristica.tipo"
       }
     })], 1), _vm._v(" "), _c("hr")], 1)])], 1);
   })], 2)]), _vm._v(" "), _vm.producto.tipo == 2 && _vm.producto.caracteristicas_producto.length ? _c("div", {
@@ -1216,32 +1302,6 @@ var render = function render() {
         },
         "edit-image": _vm.editImage
       }
-    })], 1), _vm._v(" "), _c("b-field", {
-      attrs: {
-        horizontal: "",
-        label: "Existencias"
-      }
-    }, [_c("b-input", {
-      model: {
-        value: caracteristica.existencias,
-        callback: function callback($$v) {
-          _vm.$set(caracteristica, "existencias", $$v);
-        },
-        expression: "caracteristica.existencias"
-      }
-    })], 1), _vm._v(" "), _c("b-field", {
-      attrs: {
-        horizontal: "",
-        label: "Tipo"
-      }
-    }, [_c("b-input", {
-      model: {
-        value: caracteristica.tipo,
-        callback: function callback($$v) {
-          _vm.$set(caracteristica, "tipo", $$v);
-        },
-        expression: "caracteristica.tipo"
-      }
     })], 1), _vm._v(" "), _c("div", {
       staticClass: "columns"
     }, [_c("div", {
@@ -1295,7 +1355,11 @@ var render = function render() {
           horizontal: "",
           label: "Existencias"
         }
-      }, [_c("b-input", {
+      }, [_c("b-numberinput", {
+        attrs: {
+          step: "1",
+          min: 0
+        },
         model: {
           value: tamCaracteristica.existencias,
           callback: function callback($$v) {

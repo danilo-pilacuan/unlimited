@@ -4,7 +4,7 @@
       <div class="block">
         <div class="columns is-multiline mt-2 is-vcentered">
           <div class="column is-4">
-            <div class="carouselContainer">
+            <div class="carouselContainer p-3">
                 <b-carousel :autoplay="false">
                   <b-carousel-item v-for="(img, i) in arrayImgs" :key="i">
                     <div class="cardCarousel">
@@ -22,13 +22,15 @@
           <div class="column is-8">
             <div class="card infoContainer">
               <div class="card-content">
-                <div class="content">
+                <div class="content p-5">
 
                   <p class="title has-text-centered" style="font-family: ">{{ producto.nombre }}</p>
                   <hr>
-                  <p class="subtitle has-text-centered">$ {{ producto.precio }}</p>
-                  <!-- <p class="subtitle">: </p> -->
-
+                  <div class="has-text-centered mb-5">
+                    <div v-if="producto.estado==2" class="title is-4" style="text-decoration: line-through; display:inline;">${{ producto.precio.toFixed(2) }}</div>
+                    <div v-if="producto.estado==2" class="title is-4" style="display:inline;">${{ (producto.precio*(1-(producto.descuento/100))).toFixed(2) }}</div>
+                    <div v-if="producto.estado==1" class="title is-4">${{ producto.precio.toFixed(2) }}</div>
+                  </div>
 
 
                   <div class="container" v-if="producto.tipo == 1">
@@ -45,6 +47,7 @@
                           :key="indexCar"
                         >
                           <p
+                          v-bind:class="{ colorSeleccionado: caracteristica.seleccionado }"
                             class="subtitle"
                             :style="{
                               'background-color': caracteristica.color,
@@ -101,6 +104,7 @@
                           {{ caracteristica.descripcion }}
                           </p> -->
                           <p
+                          v-bind:class="{ colorSeleccionado: caracteristica.seleccionado }"
                             class="subtitle"
                             :style="{
                               'background-color': caracteristica.color,
@@ -178,10 +182,10 @@
                   </div>
 
                     <div class="columns is-mobile is-centered">
-                    <div class="column is-3">
+                    <div class="column is-4">
                         <b-numberinput
                             step="1"
-                            :max="producto.existencias"
+                            :max="20"
                             :min="1"
                             v-model="registroCarrito.cantidad"
                             aria-minus-label="Decrement by 0.01"
@@ -201,7 +205,7 @@
                   <div class="columns">
                     <div class="column is-12">
                         <p><b>Código:</b> {{producto.codigo}}</p>
-                        <p><b>Información</b></p>
+                        <p><b>Información:</b></p>
                         <p>{{producto.descripcionCorta}}</p>
                     </div>
                   </div>
@@ -210,8 +214,10 @@
               </div>
             </div>
           </div>
-          <div class="column is-12 infoContainer">
-                <div v-html="producto.descripcionLarga">
+          <div class="column is-12 infoContainer p-5">
+                <div class="p-5">
+                    <div v-html="producto.descripcionLarga">
+                    </div>
                 </div>
           </div>
         </div>
@@ -274,16 +280,43 @@ export default {
   },
   mounted() {
     this.fetchProducto();
+    this.fetchAddVisita();
   },
+
   computed: {
     authenticated() {
       return this.$store.state.authenticated;
+    },
+    userType() {
+      return this.$store.state.userType;
     },
     cartList() {
       return this.$store.state.cartList;
     },
   },
   methods: {
+    fetchAddVisita(){
+        if(this.userType==2)
+        {
+            console.log(process.env.MIX_API_URL + "api/productos/visitas/" + this.$route.params.id)
+            fetch(process.env.MIX_API_URL + "api/productos/visitas/" + this.$route.params.id, {
+                method: "PUT",
+                headers: { "Content-Type": "application/json" },
+                credentials: "include",
+                body:JSON.stringify({id:0}),
+            })
+            .then((response) => response.json())
+            .then((data) => {
+            var resp = data.resultado;
+                if(resp)
+                {
+                    console.log("🚀 ~ file: PerfilUsuario.vue ~ line 169 ~ .then ~ resp", resp)
+                }
+
+
+            });
+        }
+    },
     handleSelectTamProducto(tamanioProducto) {
       console.log("dsasd");
       console.log(tamanioProducto);
@@ -301,6 +334,11 @@ export default {
       this.disableButton = false;
     },
     handleSeleccionCaracteristica(caracteristica) {
+
+        this.producto.caracteristicas_producto.forEach(element => {
+            element.seleccionado=0;
+        });
+        caracteristica.seleccionado=1;
         this.arrayImgs = caracteristica.urlFoto.split(";");
         this.arrayImgs.pop();
 
@@ -320,7 +358,7 @@ export default {
     addToCart() {
       console.log("fasad");
       if (this.registroCarrito.tipoRegistro == 0) {
-        let cartAux = this.cartList;
+        let cartAux = this.$store.state.cartList;
         cartAux.itemsList.push(this.registroCarrito);
         // console.log("Add cart: ")
         // console.log(producto)
@@ -389,6 +427,7 @@ export default {
               this.producto = data.respuesta;
 
               if (this.producto.tipo == 0) {
+                this.disableButton=false;
                 this.arrayImgs = this.producto.urlsFotos.split(";");
                 this.arrayImgs.pop();
                 this.disableButton = false;
@@ -406,9 +445,15 @@ export default {
                 };
               }
               if (this.producto.tipo == 1) {
+                this.disableButton=false;
+                this.producto.caracteristicas_producto.forEach(element => {
+                    element.seleccionado=0;
+                });
+                this.producto.caracteristicas_producto[0].seleccionado=1;
 
                 this.arrayImgs = this.producto.caracteristicas_producto[0].urlFoto.split(";");
                 this.arrayImgs.pop();
+
 
 
 
@@ -422,10 +467,19 @@ export default {
                   idCaracteristica: 0,
                   idTamanioCaracteristica: null,
                   idTamanioProducto: null,
-                  cantidad: 9,
+                  cantidad: 1,
                 };
               }
               if (this.producto.tipo == 2) {
+
+                 this.producto.caracteristicas_producto.forEach(element => {
+                    element.seleccionado=0;
+                });
+                this.producto.caracteristicas_producto[0].seleccionado=1;
+
+                this.arrayImgs = this.producto.caracteristicas_producto[0].urlFoto.split(";");
+
+
                 this.arrayImgs = this.producto.caracteristicas_producto[0].urlFoto.split(";");
                 this.arrayImgs.pop();
                 this.tamaniosCaractesisticaSelected=this.producto.caracteristicas_producto[0].tamanios_caracteristica
@@ -440,7 +494,7 @@ export default {
                   idCaracteristica: 0,
                   idTamanioCaracteristica: 0,
                   idTamanioProducto: null,
-                  cantidad: 9,
+                  cantidad: 1,
                 };
               }
               if (this.producto.tipo == 3) {
@@ -457,7 +511,7 @@ export default {
                   idCaracteristica: null,
                   idTamanioCaracteristica: null,
                   idTamanioProducto: 0,
-                  cantidad: 9,
+                  cantidad: 1,
                 };
               }
               console.log("this.producto");
@@ -532,6 +586,9 @@ export default {
     width: 300px;
 }
 
-
+.colorSeleccionado
+{
+    border: 4px solid #eebc7c;
+}
 
 </style>

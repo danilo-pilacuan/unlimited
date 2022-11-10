@@ -257,7 +257,7 @@ __webpack_require__.r(__webpack_exports__);
       console.log("http://192.168.0.100:8000/");
 
       try {
-        fetch("http://192.168.0.100:8000/" + "api/productos", {
+        fetch("http://192.168.0.100:8000/" + "api/productos?nuevos=1", {
           method: "GET",
           headers: {
             "Content-Type": "application/json"
@@ -384,7 +384,7 @@ __webpack_require__.r(__webpack_exports__);
       console.log("http://192.168.0.100:8000/");
 
       try {
-        fetch("http://192.168.0.100:8000/" + "api/productos", {
+        fetch("http://192.168.0.100:8000/" + "api/productos?populares=3", {
           method: "GET",
           headers: {
             "Content-Type": "application/json"
@@ -555,7 +555,7 @@ var render = function render() {
   }, [_vm._v("Nuevos")]), _vm._v(" "), _c("b-carousel-list", {
     attrs: {
       data: _vm.tablaProductos,
-      "items-to-show": _vm.mobileDetected ? 1 : 5,
+      "items-to-show": _vm.mobileDetected ? 1 : 4,
       repeat: true,
       "arrow-hover": false
     },
@@ -579,7 +579,7 @@ var render = function render() {
         })])]), _vm._v(" "), _c("div", [_c("div", [_c("p", {
           staticClass: "subtitle mt-1"
         }, [_vm._v(_vm._s(producto.nombre))]), _vm._v(" "), _c("p", {
-          staticClass: "mb-3"
+          staticClass: "mb-3 descripcionCorta"
         }, [_vm._v(_vm._s(producto.descripcionCorta))]), _vm._v(" "), _c("div", {
           staticClass: "columns is-vcentered"
         }, [_c("div", {
@@ -587,8 +587,21 @@ var render = function render() {
         }, [_c("hr", {
           staticClass: "mt-5 mb-0 pr-1"
         }), _vm._v(" "), _c("div", {
-          staticClass: "precioProducto mt-1 mb-0 m title"
-        }, [_vm._v("$" + _vm._s(producto.precio.toFixed(2)))])]), _vm._v(" "), _c("div", {
+          staticClass: "precioProducto mt-1 mb-0"
+        }, [producto.estado == 2 ? _c("div", {
+          staticClass: "title is-4",
+          staticStyle: {
+            "text-decoration": "line-through",
+            display: "inline"
+          }
+        }, [_vm._v("$" + _vm._s(producto.precio.toFixed(2)))]) : _vm._e(), _vm._v(" "), producto.estado == 2 ? _c("div", {
+          staticClass: "title is-4",
+          staticStyle: {
+            display: "inline"
+          }
+        }, [_vm._v("$" + _vm._s((producto.precio * (1 - producto.descuento / 100)).toFixed(2)))]) : _vm._e(), _vm._v(" "), producto.estado == 1 ? _c("div", {
+          staticClass: "title is-4"
+        }, [_vm._v("$" + _vm._s(producto.precio.toFixed(2)))]) : _vm._e()])]), _vm._v(" "), _c("div", {
           staticClass: "column is-2 p-0 mb-2"
         }, [_c("b-button", {
           staticClass: "has-text-white",
@@ -597,7 +610,7 @@ var render = function render() {
           },
           attrs: {
             type: "is-primary",
-            size: "is-large",
+            size: "is-medium",
             tag: "router-link",
             to: "/mostrarproducto/" + producto.id,
             "icon-left": "cart",
@@ -643,7 +656,7 @@ var render = function render() {
   }, [_vm._v("Productos Populares")]), _vm._v(" "), _c("b-carousel-list", {
     attrs: {
       data: _vm.tablaProductos,
-      "items-to-show": _vm.mobileDetected ? 1 : 5,
+      "items-to-show": _vm.mobileDetected ? 1 : 4,
       repeat: true,
       "arrow-hover": false
     },
@@ -667,7 +680,7 @@ var render = function render() {
         })])]), _vm._v(" "), _c("div", [_c("div", [_c("p", {
           staticClass: "subtitle mt-1"
         }, [_vm._v(_vm._s(producto.nombre))]), _vm._v(" "), _c("p", {
-          staticClass: "mb-3"
+          staticClass: "mb-3 descripcionCorta"
         }, [_vm._v(_vm._s(producto.descripcionCorta))]), _vm._v(" "), _c("div", {
           staticClass: "columns is-vcentered"
         }, [_c("div", {
@@ -675,8 +688,21 @@ var render = function render() {
         }, [_c("hr", {
           staticClass: "mt-5 mb-0 pr-1"
         }), _vm._v(" "), _c("div", {
-          staticClass: "precioProducto mt-1 mb-0 m title"
-        }, [_vm._v("$" + _vm._s(producto.precio.toFixed(2)))])]), _vm._v(" "), _c("div", {
+          staticClass: "precioProducto mt-1 mb-0"
+        }, [producto.estado == 2 ? _c("div", {
+          staticClass: "title is-4",
+          staticStyle: {
+            "text-decoration": "line-through",
+            display: "inline"
+          }
+        }, [_vm._v("$" + _vm._s(producto.precio.toFixed(2)))]) : _vm._e(), _vm._v(" "), producto.estado == 2 ? _c("div", {
+          staticClass: "title is-4",
+          staticStyle: {
+            display: "inline"
+          }
+        }, [_vm._v("$" + _vm._s((producto.precio * (1 - producto.descuento / 100)).toFixed(2)))]) : _vm._e(), _vm._v(" "), producto.estado == 1 ? _c("div", {
+          staticClass: "title is-4"
+        }, [_vm._v("$" + _vm._s(producto.precio.toFixed(2)))]) : _vm._e()])]), _vm._v(" "), _c("div", {
           staticClass: "column is-2 p-0 mb-2"
         }, [_c("b-button", {
           staticClass: "has-text-white",
@@ -685,7 +711,7 @@ var render = function render() {
           },
           attrs: {
             type: "is-primary",
-            size: "is-large",
+            size: "is-medium",
             tag: "router-link",
             to: "/mostrarproducto/" + producto.id,
             "icon-left": "cart",
@@ -751,7 +777,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_laravel_mix_node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, "\n.cardProducto\n{\n    border-radius: 3em;\n    background-color: #FFFFFF;\n}\n.contenedorProducto\n{\n    padding: 2em;\n}\n.imgProducto {\n  border-radius: 3em;\n  display: block;\n  height: 10em;\n  width: auto;\n}\n.contenedorGeneral\n{\n    background-color: #eed9d9;\n    border: 0px;\n}\n.carousel-list .carousel-slides .carousel-slide\n{\n    border: 0px;\n}\n", ""]);
+___CSS_LOADER_EXPORT___.push([module.id, "\n.cardProducto\n{\n    border-radius: 3em;\n    background-color: #FFFFFF;\n}\n.contenedorProducto\n{\n    padding: 2em;\n}\n.imgProducto {\n  border-radius: 3em;\n  display: block;\n  height: 10em;\n  width: auto;\n}\n.contenedorGeneral\n{\n    background-color: #eed9d9;\n    border: 0px;\n}\n.carousel-list .carousel-slides .carousel-slide\n{\n    border: 0px;\n}\n.descripcionCorta {\n  overflow: hidden;\n  display: -webkit-box;\n  min-height: 6em;\n  -webkit-line-clamp: 4;\n  -webkit-box-orient: vertical;\n}\n", ""]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 
@@ -775,7 +801,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_laravel_mix_node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, "\n.cardProducto\n{\n    border-radius: 3em;\n    background-color: #FFFFFF;\n}\n.contenedorProducto\n{\n    padding: 2em;\n}\n.imgProducto {\n  border-radius: 3em;\n  display: block;\n  height: 10em;\n  width: auto;\n}\n.contenedorGeneral\n{\n    background-color: #eed9d9;\n    border: 0px;\n}\n.carousel-list .carousel-slides .carousel-slide\n{\n    border: 0px;\n}\n", ""]);
+___CSS_LOADER_EXPORT___.push([module.id, "\n.cardProducto\n{\n    border-radius: 3em;\n    background-color: #FFFFFF;\n}\n.contenedorProducto\n{\n    padding: 2em;\n}\n.imgProducto {\n  border-radius: 3em;\n  display: block;\n  height: 10em;\n  width: auto;\n}\n.contenedorGeneral\n{\n    background-color: #eed9d9;\n    border: 0px;\n}\n.carousel-list .carousel-slides .carousel-slide\n{\n    border: 0px;\n}\n.descripcionCorta {\n  overflow: hidden;\n  display: -webkit-box;\n  min-height: 6em;\n  -webkit-line-clamp: 4;\n  -webkit-box-orient: vertical;\n}\n", ""]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 

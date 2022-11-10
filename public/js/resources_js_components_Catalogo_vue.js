@@ -42,6 +42,9 @@ __webpack_require__.r(__webpack_exports__);
     if (this.$route.query.categoria) {
       console.log("----------------------------- query");
       this.fetchProductosByCategoria(this.$route.query.categoria);
+    } else if (this.$route.query.buscar) {
+      console.log("----------------------------- query");
+      this.fetchProductosByBuscar(this.$route.query.buscar);
     } else {
       console.log("----------------------------- no query");
       this.fetchProductos();
@@ -54,6 +57,11 @@ __webpack_require__.r(__webpack_exports__);
       if (this.$route.query.categoria) {
         console.log("----------------------------- query");
         this.fetchProductosByCategoria(this.$route.query.categoria);
+      }
+
+      if (this.$route.query.buscar) {
+        console.log("----------------------------- query");
+        this.fetchProductosByBuscar(this.$route.query.buscar);
       } else {
         console.log("----------------------------- no query");
         this.fetchProductos();
@@ -179,6 +187,31 @@ __webpack_require__.r(__webpack_exports__);
           }
         });
       } catch (e) {}
+    },
+    fetchProductosByBuscar: function fetchProductosByBuscar(paramBuscar) {
+      var _this4 = this;
+
+      try {
+        fetch("http://192.168.0.100:8000/" + "api/productos?buscar=" + paramBuscar, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          credentials: "include"
+        }).then(function (response) {
+          return response.json();
+        }).then(function (data) {
+          var resp = data;
+
+          if (data) {
+            _this4.tablaProductos = data.respuesta;
+            console.log("this.tablaProductos");
+            console.log(_this4.tablaProductos);
+          } else {
+            _this4.tablaProductos = [];
+          }
+        });
+      } catch (e) {}
     }
   }
 });
@@ -264,7 +297,7 @@ var render = function render() {
     })])]), _vm._v(" "), _c("div", [_c("div", [_c("p", {
       staticClass: "subtitle mt-1"
     }, [_vm._v(_vm._s(producto.nombre))]), _vm._v(" "), _c("p", {
-      staticClass: "mb-3"
+      staticClass: "mb-3 descripcionCorta"
     }, [_vm._v(_vm._s(producto.descripcionCorta))]), _vm._v(" "), _c("div", {
       staticClass: "columns is-vcentered"
     }, [_c("div", {
@@ -272,8 +305,21 @@ var render = function render() {
     }, [_c("hr", {
       staticClass: "mt-5 mb-0 pr-1"
     }), _vm._v(" "), _c("div", {
-      staticClass: "precioProducto mt-1 mb-0 m title"
-    }, [_vm._v("$" + _vm._s(producto.precio.toFixed(2)))])]), _vm._v(" "), _c("div", {
+      staticClass: "precioProducto mt-1 mb-0"
+    }, [producto.estado == 2 ? _c("div", {
+      staticClass: "title is-4",
+      staticStyle: {
+        "text-decoration": "line-through",
+        display: "inline"
+      }
+    }, [_vm._v("$" + _vm._s(producto.precio.toFixed(2)))]) : _vm._e(), _vm._v(" "), producto.estado == 2 ? _c("div", {
+      staticClass: "title is-4",
+      staticStyle: {
+        display: "inline"
+      }
+    }, [_vm._v("$" + _vm._s((producto.precio * (1 - producto.descuento / 100)).toFixed(2)))]) : _vm._e(), _vm._v(" "), producto.estado == 1 ? _c("div", {
+      staticClass: "title is-4"
+    }, [_vm._v("$" + _vm._s(producto.precio.toFixed(2)))]) : _vm._e()])]), _vm._v(" "), _c("div", {
       staticClass: "column is-2 p-0 mb-2"
     }, [_c("b-button", {
       staticClass: "has-text-white",
@@ -282,7 +328,7 @@ var render = function render() {
       },
       attrs: {
         type: "is-primary",
-        size: "is-large",
+        size: "is-medium",
         tag: "router-link",
         to: "/mostrarproducto/" + producto.id,
         "icon-left": "cart",
@@ -314,7 +360,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_laravel_mix_node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, "\n.cardProducto\n{\n    border-radius: 3em;\n    background-color: #FFFFFF;\n}\n.contenedorProducto\n{\n    padding: 2em;\n}\n.imgProducto\n{\n    border-radius: 3em;\n}\n", ""]);
+___CSS_LOADER_EXPORT___.push([module.id, "\n.cardProducto\n{\n    border-radius: 3em;\n    background-color: #FFFFFF;\n}\n.contenedorProducto\n{\n    padding: 2em;\n}\n.imgProducto\n{\n    border-radius: 3em;\n}\n.descripcionCorta {\n  overflow: hidden;\n  display: -webkit-box;\n  min-height: 6em;\n  -webkit-line-clamp: 4;\n  -webkit-box-orient: vertical;\n}\n", ""]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 

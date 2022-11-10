@@ -73,16 +73,43 @@ __webpack_require__.r(__webpack_exports__);
   },
   mounted: function mounted() {
     this.fetchProducto();
+    this.fetchAddVisita();
   },
   computed: {
     authenticated: function authenticated() {
       return this.$store.state.authenticated;
+    },
+    userType: function userType() {
+      return this.$store.state.userType;
     },
     cartList: function cartList() {
       return this.$store.state.cartList;
     }
   },
   methods: {
+    fetchAddVisita: function fetchAddVisita() {
+      if (this.userType == 2) {
+        console.log("http://192.168.0.100:8000/" + "api/productos/visitas/" + this.$route.params.id);
+        fetch("http://192.168.0.100:8000/" + "api/productos/visitas/" + this.$route.params.id, {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          credentials: "include",
+          body: JSON.stringify({
+            id: 0
+          })
+        }).then(function (response) {
+          return response.json();
+        }).then(function (data) {
+          var resp = data.resultado;
+
+          if (resp) {
+            console.log("🚀 ~ file: PerfilUsuario.vue ~ line 169 ~ .then ~ resp", resp);
+          }
+        });
+      }
+    },
     handleSelectTamProducto: function handleSelectTamProducto(tamanioProducto) {
       console.log("dsasd");
       console.log(tamanioProducto);
@@ -100,6 +127,10 @@ __webpack_require__.r(__webpack_exports__);
       this.disableButton = false;
     },
     handleSeleccionCaracteristica: function handleSeleccionCaracteristica(caracteristica) {
+      this.producto.caracteristicas_producto.forEach(function (element) {
+        element.seleccionado = 0;
+      });
+      caracteristica.seleccionado = 1;
       this.arrayImgs = caracteristica.urlFoto.split(";");
       this.arrayImgs.pop();
 
@@ -120,7 +151,7 @@ __webpack_require__.r(__webpack_exports__);
       console.log("fasad");
 
       if (this.registroCarrito.tipoRegistro == 0) {
-        var cartAux = this.cartList;
+        var cartAux = this.$store.state.cartList;
         cartAux.itemsList.push(this.registroCarrito); // console.log("Add cart: ")
         // console.log(producto)
 
@@ -186,6 +217,7 @@ __webpack_require__.r(__webpack_exports__);
             _this.producto = data.respuesta;
 
             if (_this.producto.tipo == 0) {
+              _this.disableButton = false;
               _this.arrayImgs = _this.producto.urlsFotos.split(";");
 
               _this.arrayImgs.pop();
@@ -206,6 +238,13 @@ __webpack_require__.r(__webpack_exports__);
             }
 
             if (_this.producto.tipo == 1) {
+              _this.disableButton = false;
+
+              _this.producto.caracteristicas_producto.forEach(function (element) {
+                element.seleccionado = 0;
+              });
+
+              _this.producto.caracteristicas_producto[0].seleccionado = 1;
               _this.arrayImgs = _this.producto.caracteristicas_producto[0].urlFoto.split(";");
 
               _this.arrayImgs.pop();
@@ -220,11 +259,17 @@ __webpack_require__.r(__webpack_exports__);
                 idCaracteristica: 0,
                 idTamanioCaracteristica: null,
                 idTamanioProducto: null,
-                cantidad: 9
+                cantidad: 1
               };
             }
 
             if (_this.producto.tipo == 2) {
+              _this.producto.caracteristicas_producto.forEach(function (element) {
+                element.seleccionado = 0;
+              });
+
+              _this.producto.caracteristicas_producto[0].seleccionado = 1;
+              _this.arrayImgs = _this.producto.caracteristicas_producto[0].urlFoto.split(";");
               _this.arrayImgs = _this.producto.caracteristicas_producto[0].urlFoto.split(";");
 
               _this.arrayImgs.pop();
@@ -240,7 +285,7 @@ __webpack_require__.r(__webpack_exports__);
                 idCaracteristica: 0,
                 idTamanioCaracteristica: 0,
                 idTamanioProducto: null,
-                cantidad: 9
+                cantidad: 1
               };
             }
 
@@ -259,7 +304,7 @@ __webpack_require__.r(__webpack_exports__);
                 idCaracteristica: null,
                 idTamanioCaracteristica: null,
                 idTamanioProducto: 0,
-                cantidad: 9
+                cantidad: 1
               };
             }
 
@@ -303,7 +348,7 @@ var render = function render() {
   }, [_c("div", {
     staticClass: "column is-4"
   }, [_c("div", {
-    staticClass: "carouselContainer"
+    staticClass: "carouselContainer p-3"
   }, [_c("b-carousel", {
     attrs: {
       autoplay: false
@@ -333,15 +378,28 @@ var render = function render() {
   }, [_c("div", {
     staticClass: "card-content"
   }, [_c("div", {
-    staticClass: "content"
+    staticClass: "content p-5"
   }, [_c("p", {
     staticClass: "title has-text-centered",
     staticStyle: {
       "font-family": ""
     }
-  }, [_vm._v(_vm._s(_vm.producto.nombre))]), _vm._v(" "), _c("hr"), _vm._v(" "), _c("p", {
-    staticClass: "subtitle has-text-centered"
-  }, [_vm._v("$ " + _vm._s(_vm.producto.precio))]), _vm._v(" "), _vm.producto.tipo == 1 ? _c("div", {
+  }, [_vm._v(_vm._s(_vm.producto.nombre))]), _vm._v(" "), _c("hr"), _vm._v(" "), _c("div", {
+    staticClass: "has-text-centered mb-5"
+  }, [_vm.producto.estado == 2 ? _c("div", {
+    staticClass: "title is-4",
+    staticStyle: {
+      "text-decoration": "line-through",
+      display: "inline"
+    }
+  }, [_vm._v("$" + _vm._s(_vm.producto.precio.toFixed(2)))]) : _vm._e(), _vm._v(" "), _vm.producto.estado == 2 ? _c("div", {
+    staticClass: "title is-4",
+    staticStyle: {
+      display: "inline"
+    }
+  }, [_vm._v("$" + _vm._s((_vm.producto.precio * (1 - _vm.producto.descuento / 100)).toFixed(2)))]) : _vm._e(), _vm._v(" "), _vm.producto.estado == 1 ? _c("div", {
+    staticClass: "title is-4"
+  }, [_vm._v("$" + _vm._s(_vm.producto.precio.toFixed(2)))]) : _vm._e()]), _vm._v(" "), _vm.producto.tipo == 1 ? _c("div", {
     staticClass: "container"
   }, [_c("div", {
     staticClass: "block"
@@ -353,6 +411,9 @@ var render = function render() {
       staticClass: "column is-2"
     }, [_c("p", {
       staticClass: "subtitle",
+      "class": {
+        colorSeleccionado: caracteristica.seleccionado
+      },
       staticStyle: {
         cursor: "pointer"
       },
@@ -379,6 +440,9 @@ var render = function render() {
       staticClass: "column is-2"
     }, [_c("p", {
       staticClass: "subtitle",
+      "class": {
+        colorSeleccionado: caracteristica.seleccionado
+      },
       staticStyle: {
         cursor: "pointer"
       },
@@ -464,11 +528,11 @@ var render = function render() {
   }), 0)], 1)], 1)])])]) : _vm._e(), _vm._v(" "), _c("div", {
     staticClass: "columns is-mobile is-centered"
   }, [_c("div", {
-    staticClass: "column is-3"
+    staticClass: "column is-4"
   }, [_c("b-numberinput", {
     attrs: {
       step: "1",
-      max: _vm.producto.existencias,
+      max: 20,
       min: 1,
       "aria-minus-label": "Decrement by 0.01",
       "aria-plus-label": "Increment by 0.01"
@@ -497,12 +561,14 @@ var render = function render() {
   }, [_c("div", {
     staticClass: "column is-12"
   }, [_c("p", [_c("b", [_vm._v("Código:")]), _vm._v(" " + _vm._s(_vm.producto.codigo))]), _vm._v(" "), _vm._m(3), _vm._v(" "), _c("p", [_vm._v(_vm._s(_vm.producto.descripcionCorta))])])])])])])]), _vm._v(" "), _c("div", {
-    staticClass: "column is-12 infoContainer"
+    staticClass: "column is-12 infoContainer p-5"
+  }, [_c("div", {
+    staticClass: "p-5"
   }, [_c("div", {
     domProps: {
       innerHTML: _vm._s(_vm.producto.descripcionLarga)
     }
-  })])])])])]);
+  })])])])])])]);
 };
 
 var staticRenderFns = [function () {
@@ -536,7 +602,7 @@ var staticRenderFns = [function () {
   var _vm = this,
       _c = _vm._self._c;
 
-  return _c("p", [_c("b", [_vm._v("Información")])]);
+  return _c("p", [_c("b", [_vm._v("Información:")])]);
 }];
 render._withStripped = true;
 
@@ -559,7 +625,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_laravel_mix_node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, "\n.cardCarousel {\n  flex: 1;\n}\n.carouselContainer\n{\n\n  background-color: #f3e5e5;\n  border-radius: 5%;\n}\n.infoContainer\n{\n\n  background-color: #f3e5e5;\n}\n.card-photo {\n  display: block;\n  width: 100%;\n}\n.card-info {\n  display: flex;\n  flex-direction: column;\n  align-items: center;\n}\n.card-logo {\n    position: absolute;\n    display: block;\n    max-width: 80%;\n    max-height: 100%;\n    background-color: white;\n}\n.card-logo-container {\n    display: flex;\n    justify-content: center;\n    align-items: center;\n    position: relative;\n    margin-top: -80%;\n    margin-bottom: 0%;\n    padding: 60%;\n    min-width: 100%;\n}\n.stubImg\n{\n    height: 300px;\n    width: 300px;\n}\n\n\n\n", ""]);
+___CSS_LOADER_EXPORT___.push([module.id, "\n.cardCarousel {\n  flex: 1;\n}\n.carouselContainer\n{\n\n  background-color: #f3e5e5;\n  border-radius: 5%;\n}\n.infoContainer\n{\n\n  background-color: #f3e5e5;\n}\n.card-photo {\n  display: block;\n  width: 100%;\n}\n.card-info {\n  display: flex;\n  flex-direction: column;\n  align-items: center;\n}\n.card-logo {\n    position: absolute;\n    display: block;\n    max-width: 80%;\n    max-height: 100%;\n    background-color: white;\n}\n.card-logo-container {\n    display: flex;\n    justify-content: center;\n    align-items: center;\n    position: relative;\n    margin-top: -80%;\n    margin-bottom: 0%;\n    padding: 60%;\n    min-width: 100%;\n}\n.stubImg\n{\n    height: 300px;\n    width: 300px;\n}\n.colorSeleccionado\n{\n    border: 4px solid #eebc7c;\n}\n\n", ""]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 

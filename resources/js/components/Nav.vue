@@ -47,6 +47,31 @@
           CONTACTOS
         </b-navbar-item>
       </b-navbar-dropdown>
+
+
+      <b-navbar-item tag="div">
+        </b-navbar-item>
+      <b-navbar-item tag="div">
+        </b-navbar-item>
+      <b-navbar-item tag="div">
+        </b-navbar-item>
+      <b-navbar-item tag="div">
+      </b-navbar-item>
+      <b-navbar-item tag="div">
+<b-input placeholder="Buscar..."
+                type="buscar"
+                custom-class="inputWidth"
+                v-model="inputBuscar"
+                @keyup.native.enter="buscar"
+                icon="magnify">
+            </b-input>
+            <p class="control">
+                <b-button type="is-danger" style="border-top-right-radius:1em; border-bottom-right-radius:1em; border-bottom-left-radius:0em; border-top-left-radius:0em;" icon-left="magnify" @click="buscar"/>
+            </p>
+      </b-navbar-item>
+
+
+
     </template>
 
     <template #end>
@@ -95,7 +120,7 @@
             </b-icon>
             </router-link>
           <router-link
-            class="ml-3"
+            class="ml-3 mr-3"
             to="to"
             v-else @click.native="logout">
             <b-icon
@@ -107,7 +132,7 @@
             </router-link  >
 
           <router-link
-            class="ml-3"
+            class="ml-3 mr-3"
             to="/registrarse"
             v-if="!authenticated"
             >
@@ -131,9 +156,16 @@ export default {
     return {
       imgSrc: process.env.MIX_API_URL + "imgs/logo.png",
       tablaCategorias: [],
+      inputBuscar:""
     };
   },
   methods: {
+    buscar()
+    {
+        let buscarParam=this.inputBuscar;
+        this.$router.push("/catalogo?buscar="+buscarParam);
+        this.inputBuscar="";
+    },
     logout() {
       this.$store.dispatch("setAuth", false);
       this.$store.dispatch("setAuthToken", "");
@@ -194,4 +226,12 @@ export default {
 </script>
 
 <style>
+.inputWidth
+{
+    width: 20em !important;
+    border-top-right-radius:0em !important;
+    border-bottom-right-radius:0em !important;
+    border-bottom-left-radius:1em !important;
+    border-top-left-radius:1em !important;
+}
 </style>

@@ -2,6 +2,8 @@ import Vue from 'vue'
 import Vuex, { Store } from 'vuex'
 import VuexPersistence from 'vuex-persist';
 import localForage from 'localforage';
+import createMutationsSharer from "vuex-shared-mutations";
+
 const vuexLocal = new VuexPersistence({
   storage: localForage,
   asyncStorage: true,
@@ -37,7 +39,8 @@ const store = new Vuex.Store({
   },
   modules: {
   },
-  plugins: [vuexLocal.plugin],
+
+  plugins: [vuexLocal.plugin,createMutationsSharer({ predicate: ["SET_CART_LIST"] })],
 })
 
 export default store;

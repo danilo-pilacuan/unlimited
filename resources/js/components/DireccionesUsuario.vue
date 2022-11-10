@@ -69,7 +69,7 @@ export default {
                 .then((data) => {
                 var resp = data.respuesta;
                 console.log(resp);
-                    this.$buefy.dialog.alert("Categoría editada correctamente");
+                    this.$buefy.dialog.alert("Dirección guardada correctamente");
                     this.$store.dispatch("setCurrentUser", this.currentUser)
                 });
         }

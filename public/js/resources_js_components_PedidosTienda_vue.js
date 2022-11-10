@@ -18,7 +18,7 @@ __webpack_require__.r(__webpack_exports__);
     };
   },
   mounted: function mounted() {
-    this.fetchOrdenesByUserId();
+    this.fetchOrdenes();
   },
   computed: {
     authenticated: function authenticated() {
@@ -36,7 +36,7 @@ __webpack_require__.r(__webpack_exports__);
       console.log("🚀 ~ file: PedidosUsuario.vue ~ line 55 ~ id", id);
       this.$router.push("/pedidos/" + id);
     },
-    fetchOrdenesByUserId: function fetchOrdenesByUserId() {
+    fetchOrdenes: function fetchOrdenes() {
       var _this = this;
 
       try {
@@ -82,39 +82,108 @@ var render = function render() {
   var _vm = this,
       _c = _vm._self._c;
 
-  return _c("div", [_c("h1", {
+  return _c("div", {
+    staticStyle: {
+      "padding-bottom": "5em"
+    }
+  }, [_c("div", {
+    staticClass: "mt-3 p-4"
+  }, [_c("h1", {
     staticClass: "title"
-  }, [_vm._v("Pedidos")]), _vm._v(" "), _vm._l(_vm.tablaPedidos, function (pedido, index) {
-    return _c("div", {
-      key: index,
-      staticClass: "container"
-    }, [_c("div", {
-      staticClass: "block"
-    }, [_c("div", {
-      staticClass: "columns"
-    }, [_c("div", {
-      staticClass: "column"
-    }, [_c("div", {
-      "class": {
-        entregado: pedido.estadoOrden == 1,
-        noentregado: pedido.estadoOrden == 0
-      },
-      staticStyle: {
-        cursor: "pointer"
-      },
-      on: {
-        click: function click($event) {
-          return _vm.verPedido(pedido.id);
-        }
+  }, [_vm._v("Pedidos")]), _vm._v(" "), _c("div", {
+    staticClass: "block"
+  }, [_c("div", {
+    staticClass: "columns"
+  }, [_c("div", {
+    staticClass: "column"
+  }, [_c("b-table", {
+    attrs: {
+      data: _vm.tablaPedidos,
+      bordered: true,
+      striped: false,
+      hoverable: false,
+      loading: false,
+      focusable: false,
+      "mobile-cards": true,
+      paginated: true,
+      "per-page": 5
+    }
+  }, [_c("b-table-column", {
+    staticClass: "is-vcentered",
+    attrs: {
+      label: "Cliente",
+      field: "user",
+      centered: ""
+    },
+    scopedSlots: _vm._u([{
+      key: "default",
+      fn: function fn(props) {
+        return [_c("p", [_vm._v(_vm._s(props.row.user.nombres + " " + props.row.user.apellidos))])];
       }
-    }, [_c("p", {
-      staticClass: "subtitle"
-    }, [_vm._v("Fecha: " + _vm._s(pedido.fechaOrden))]), _vm._v(" "), _c("p", {
-      staticClass: "subtitle"
-    }, [_vm._v("Estado: " + _vm._s(pedido.estadoOrden == 1 ? "Entregado" : "No entregado"))]), _vm._v(" "), _c("p", {
-      staticClass: "subtitle"
-    }, [_vm._v("Valor Total: " + _vm._s(pedido.valorTotal))])])])])])]);
-  })], 2);
+    }])
+  }), _vm._v(" "), _c("b-table-column", {
+    staticClass: "is-vcentered",
+    attrs: {
+      label: "Fecha Pedido",
+      field: "producto.descripcionCorta",
+      centered: ""
+    },
+    scopedSlots: _vm._u([{
+      key: "default",
+      fn: function fn(props) {
+        return [_vm._v("\n                    " + _vm._s(props.row.fechaOrden) + "\n\n                ")];
+      }
+    }])
+  }), _vm._v(" "), _c("b-table-column", {
+    staticClass: "is-vcentered",
+    attrs: {
+      label: "Estado",
+      field: "producto.descripcionCorta",
+      centered: ""
+    },
+    scopedSlots: _vm._u([{
+      key: "default",
+      fn: function fn(props) {
+        return [_vm._v("\n                    " + _vm._s(props.row.estadoOrden == 1 ? "Entregado" : "No entregado") + "\n\n                ")];
+      }
+    }])
+  }), _vm._v(" "), _c("b-table-column", {
+    attrs: {
+      label: "Valor Total",
+      field: "precio",
+      centered: ""
+    },
+    scopedSlots: _vm._u([{
+      key: "default",
+      fn: function fn(props) {
+        return [_vm._v("\n                    $" + _vm._s(props.row.valorTotal.toFixed(2)) + "\n                ")];
+      }
+    }])
+  }), _vm._v(" "), _c("b-table-column", {
+    attrs: {
+      field: "actions",
+      label: "Acciones"
+    },
+    scopedSlots: _vm._u([{
+      key: "default",
+      fn: function fn(props) {
+        return [_c("div", {
+          staticClass: "buttons"
+        }, [_c("b-button", {
+          attrs: {
+            rounded: "",
+            type: "is-primary",
+            "icon-left": "eye"
+          },
+          on: {
+            click: function click($event) {
+              return _vm.verPedido(props.row.id);
+            }
+          }
+        })], 1)];
+      }
+    }])
+  })], 1)], 1)])])])]);
 };
 
 var staticRenderFns = [];

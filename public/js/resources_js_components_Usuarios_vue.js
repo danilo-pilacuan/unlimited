@@ -178,16 +178,7 @@ var render = function render() {
   var _vm = this,
       _c = _vm._self._c;
 
-  return _c("div", [_vm._m(0), _vm._v(" "), _c("div", {
-    staticClass: "has-text-left"
-  }, [_c("b-button", {
-    attrs: {
-      type: "is-primary"
-    },
-    on: {
-      click: _vm.addFunction
-    }
-  }, [_vm._v("Registrar")])], 1), _vm._v(" "), _c("hr"), _vm._v(" "), _c("div", {
+  return _c("div", [_vm._m(0), _vm._v(" "), _c("hr"), _vm._v(" "), _c("div", {
     staticClass: "container"
   }, [_c("div", {
     staticClass: "block"

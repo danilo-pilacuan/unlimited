@@ -3,9 +3,7 @@
     <div class="has-text-centered">
       <h1 class="title">Usuarios</h1>
     </div>
-    <div class="has-text-left">
-       <b-button type="is-primary" @click="addFunction">Registrar</b-button>
-    </div>
+
     <hr />
     <div class="container">
       <div class="block">

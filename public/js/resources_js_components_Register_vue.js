@@ -15,10 +15,24 @@ __webpack_require__.r(__webpack_exports__);
   data: function data() {
     return {
       username: "",
+      errors: {},
       password: "",
       loginFailed: false,
       validatePassword: false,
-      validateUsername: false
+      validateUsername: false,
+      selected: new Date(),
+      usuario: {
+        nombres: "",
+        apellidos: "",
+        fechaNacimientoObj: new Date(),
+        fechaNacimiento: "",
+        urlFoto: "...",
+        email: "",
+        telefono: "",
+        password: "",
+        password_confirmation: "",
+        tipoUsuario: 2
+      }
     };
   },
   computed: {
@@ -30,28 +44,47 @@ __webpack_require__.r(__webpack_exports__);
     }
   },
   methods: {
+    clearDate: function clearDate() {
+      this.user.fechaNacimiento = null;
+    },
     submit: function submit() {
       var _this = this;
 
-      fetch("http://192.168.0.100:8000/" + "api/users/login", {
+      this.usuario.fechaNacimiento = this.usuario.fechaNacimientoObj.toISOString().split('T')[0];
+      fetch("http://192.168.0.100:8000/" + "api/register", {
         method: "POST",
         headers: {
-          "Content-Type": "application/json"
+          "Content-Type": "application/json",
+          "Accept": "application/json"
         },
         credentials: "include",
-        body: JSON.stringify({
-          name: this.username,
-          password: this.password
-        })
+        body: JSON.stringify(this.usuario)
       }).then(function (response) {
+        console.log("🚀 ~ file: Register.vue ~ line 145 ~ .then ~ response", response); // if(response.status!=200)
+        // {
+        //     this.$buefy.dialog.alert("Revise los campos");
+        //     //return null;
+        // }
+
         return response.json();
       }).then(function (data) {
-        var resp = data.message;
+        var resp = data;
+        console.log("🚀 ~ file: Register.vue ~ line 147 ~ .then ~ data", data);
         console.log(resp);
 
-        if (resp == "success") {
-          _this.$router.push("/");
-        } else _this.loginFailed = true;
+        if (resp.errors) {
+          //this.$buefy.dialog.alert("Error");
+          //this.$router.push("/login");
+          // resp.errors.forEach(element => {
+          // });
+          _this.errors = resp.errors;
+        } else if (resp) {
+          _this.$buefy.dialog.alert("Usuario registrado correctamente");
+
+          _this.$router.push("/login");
+        } else {}
+
+        ;
       });
     },
     authLogin: function authLogin() {
@@ -108,6 +141,9 @@ var render = function render() {
 
   return _c("div", {
     staticClass: "home",
+    staticStyle: {
+      "padding-bottom": "10rem"
+    },
     attrs: {
       id: "login"
     }
@@ -118,12 +154,16 @@ var render = function render() {
   }, [_c("div", {
     staticClass: "columns"
   }, [_c("div", {
-    staticClass: "column is-4"
+    staticClass: "column is-3"
   }), _vm._v(" "), _c("div", {
     staticClass: "column"
-  }, [_c("section", {
+  }, [_c("div", {
+    staticClass: "card mt-3"
+  }, [_vm.usuario ? _c("section", {
     staticClass: "section"
-  }, [_c("form", {
+  }, [_c("p", {
+    staticClass: "subtitle has-text-centered has-text-weight-bold"
+  }, [_vm._v("Registrarse")]), _vm._v(" "), _c("form", {
     on: {
       submit: function submit($event) {
         $event.preventDefault();
@@ -132,114 +172,185 @@ var render = function render() {
     }
   }, [_c("b-field", {
     attrs: {
-      label: "Nombre Completo",
+      grouped: ""
+    }
+  }, [_c("b-field", {
+    attrs: {
+      label: "Nombres (*)",
       type: {
-        "is-danger": _vm.validateUsername
+        "is-danger": _vm.errors.nombres
       },
-      message: {
-        "Username is not available": _vm.validateUsername
-      }
+      expanded: ""
     }
   }, [_c("b-input", {
     attrs: {
+      required: "",
       maxlength: "30"
     },
     model: {
-      value: _vm.username,
+      value: _vm.usuario.nombres,
       callback: function callback($$v) {
-        _vm.username = $$v;
+        _vm.$set(_vm.usuario, "nombres", $$v);
       },
-      expression: "username"
+      expression: "usuario.nombres"
     }
   })], 1), _vm._v(" "), _c("b-field", {
     attrs: {
-      label: "Correo Electrónico",
+      label: "Apellidos (*)",
       type: {
-        "is-danger": _vm.validateUsername
+        "is-danger": _vm.errors.apellidos
       },
-      message: {
-        "Username is not available": _vm.validateUsername
-      }
+      expanded: ""
     }
   }, [_c("b-input", {
     attrs: {
+      required: "",
       maxlength: "30"
     },
     model: {
-      value: _vm.username,
+      value: _vm.usuario.apellidos,
       callback: function callback($$v) {
-        _vm.username = $$v;
+        _vm.$set(_vm.usuario, "apellidos", $$v);
       },
-      expression: "username"
+      expression: "usuario.apellidos"
     }
-  })], 1), _vm._v(" "), _c("b-field", {
+  })], 1)], 1), _vm._v(" "), _c("b-field", {
     attrs: {
-      label: "Contraseña",
+      grouped: ""
+    }
+  }, [_c("b-field", {
+    attrs: {
+      label: "Email (*)",
       type: {
-        "is-danger": _vm.validatePassword
+        "is-danger": _vm.errors.email
       },
-      message: [{
-        "Password is too short": _vm.validatePassword
-      }, {
-        "Password must have at least 8 characters": _vm.validatePassword
-      }]
+      expanded: ""
     }
   }, [_c("b-input", {
     attrs: {
-      type: "password",
+      required: "",
+      type: "email",
+      "validation-message": "Ingrese un email valido",
+      pattern: "^\\S+@\\S+\\.\\S+$",
       maxlength: "30"
     },
     model: {
-      value: _vm.password,
+      value: _vm.usuario.email,
       callback: function callback($$v) {
-        _vm.password = $$v;
+        _vm.$set(_vm.usuario, "email", $$v);
       },
-      expression: "password"
+      expression: "usuario.email"
     }
   })], 1), _vm._v(" "), _c("b-field", {
     attrs: {
-      label: "Confirmar Contraseña",
+      label: "Teléfono (*)",
       type: {
-        "is-danger": _vm.validatePassword
+        "is-danger": _vm.errors.telefono
       },
-      message: [{
-        "Password is too short": _vm.validatePassword
-      }, {
-        "Password must have at least 8 characters": _vm.validatePassword
-      }]
+      expanded: ""
     }
   }, [_c("b-input", {
     attrs: {
-      type: "password",
-      maxlength: "30"
+      required: "",
+      maxlength: "10"
     },
     model: {
-      value: _vm.password,
+      value: _vm.usuario.telefono,
       callback: function callback($$v) {
-        _vm.password = $$v;
+        _vm.$set(_vm.usuario, "telefono", $$v);
       },
-      expression: "password"
+      expression: "usuario.telefono"
+    }
+  })], 1)], 1), _vm._v(" "), _c("b-field", {
+    attrs: {
+      label: "Fecha Nacimiento (*)",
+      expanded: ""
+    }
+  }, [_c("b-datepicker", {
+    attrs: {
+      "show-week-number": false,
+      placeholder: "Seleccionar Fecha...",
+      icon: "calendar-today",
+      "icon-right": _vm.usuario.fechaNacimientoObj ? "close-circle" : "",
+      "icon-right-clickable": "",
+      "trap-focus": ""
+    },
+    on: {
+      "icon-right-click": _vm.clearDate
+    },
+    model: {
+      value: _vm.usuario.fechaNacimientoObj,
+      callback: function callback($$v) {
+        _vm.$set(_vm.usuario, "fechaNacimientoObj", $$v);
+      },
+      expression: "usuario.fechaNacimientoObj"
     }
   })], 1), _vm._v(" "), _c("b-field", {
     attrs: {
-      label: "",
-      type: {
-        "is-danger": _vm.loginFailed
-      },
-      message: {
-        "Login fallido": _vm.loginFailed
-      }
+      grouped: ""
     }
-  }), _vm._v(" "), _c("b-button", {
+  }, [_c("b-field", {
     attrs: {
-      type: "is-primary",
-      label: "Registrarse"
+      type: {
+        "is-danger": _vm.errors.password
+      },
+      label: "Contraseña (*)",
+      expanded: ""
+    }
+  }, [_c("b-input", {
+    attrs: {
+      required: "",
+      maxlength: "16",
+      type: "password"
+    },
+    model: {
+      value: _vm.usuario.password,
+      callback: function callback($$v) {
+        _vm.$set(_vm.usuario, "password", $$v);
+      },
+      expression: "usuario.password"
+    }
+  })], 1), _vm._v(" "), _c("b-field", {
+    attrs: {
+      type: {
+        "is-danger": _vm.errors.password
+      },
+      label: "Confirmar Contraseña (*)",
+      expanded: ""
+    }
+  }, [_c("b-input", {
+    attrs: {
+      required: "",
+      maxlength: "16",
+      type: "password"
+    },
+    model: {
+      value: _vm.usuario.password_confirmation,
+      callback: function callback($$v) {
+        _vm.$set(_vm.usuario, "password_confirmation", $$v);
+      },
+      expression: "usuario.password_confirmation"
+    }
+  })], 1)], 1), _vm._v(" "), _c("div", {
+    staticClass: "has-text-weight-bold",
+    staticStyle: {
+      display: "inline"
+    }
+  }, [_vm._v("(*)")]), _vm._v(" "), _c("div", {
+    staticStyle: {
+      display: "inline"
+    }
+  }, [_vm._v("Campos Obligatorios")]), _vm._v(" "), _c("br"), _vm._v(" "), Object.keys(_vm.errors).length > 0 ? _c("div", [_vm._v("Revise los campos marcados")]) : _vm._e(), _vm._v(" "), _c("b-button", {
+    attrs: {
+      type: "is-primary is-align-self-center",
+      label: "Registrarse",
+      size: "is-medium"
     },
     on: {
       click: _vm.submit
     }
-  })], 1)])]), _vm._v(" "), _c("div", {
-    staticClass: "column is-4"
+  })], 1)]) : _vm._e()])]), _vm._v(" "), _c("div", {
+    staticClass: "column is-3"
   })])])])]);
 };
 

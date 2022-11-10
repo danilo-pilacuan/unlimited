@@ -32,6 +32,7 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 });
 
 Route::get("ordenes/user/{id}",[OrdenController::class,'getOrdenByUserId']);
+Route::put("productos/visitas/{id}",[ProductoController::class,'updateVisitas']);
 
 Route::get("registrocarrito/orden/{id}",[RegistroCarritoController::class,'getRegistrosByOrdenId']);
 

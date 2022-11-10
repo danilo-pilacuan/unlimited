@@ -51,14 +51,19 @@
               <div >
                 <div>
                   <p class="subtitle mt-1">{{ producto.nombre }}</p>
-                  <p class="mb-3">{{producto.descripcionCorta}}</p>
+                  <p class="mb-3 descripcionCorta">{{producto.descripcionCorta}}</p>
                   <div class="columns is-vcentered">
                     <div class="column is-8 p-0 mr-1 ml-3">
                         <hr class="mt-5 mb-0 pr-1">
-                        <div class="precioProducto mt-1 mb-0 m title">${{producto.precio.toFixed(2)}}</div>
+                        <div class="precioProducto mt-1 mb-0">
+                            <div v-if="producto.estado==2" class="title is-4" style="text-decoration: line-through; display:inline;">${{ producto.precio.toFixed(2) }}</div>
+                            <div v-if="producto.estado==2" class="title is-4" style="display:inline;">${{ (producto.precio*(1-(producto.descuento/100))).toFixed(2) }}</div>
+                            <div v-if="producto.estado==1" class="title is-4">${{ producto.precio.toFixed(2) }}</div>
+                            <!-- ${{producto.precio.toFixed(2)}} -->
+                            </div>
                     </div>
                     <div class="column is-2 p-0 mb-2">
-                        <b-button class="has-text-white" style="color:'#FFF'" type="is-primary" size="is-large" tag="router-link"
+                        <b-button class="has-text-white" style="color:'#FFF'" type="is-primary" size="is-medium" tag="router-link"
                 :to="'/mostrarproducto/'+producto.id" icon-left="cart" rounded></b-button>
                     </div>
                   </div>
@@ -231,6 +236,12 @@ export default {
 
         this.fetchProductosByCategoria(this.$route.query.categoria);
     }
+    else if(this.$route.query.buscar)
+    {
+        console.log("----------------------------- query")
+
+        this.fetchProductosByBuscar(this.$route.query.buscar);
+    }
     else
     {
         console.log("----------------------------- no query")
@@ -245,6 +256,12 @@ export default {
         console.log("----------------------------- query")
 
         this.fetchProductosByCategoria(this.$route.query.categoria);
+    }
+    if(this.$route.query.buscar)
+    {
+        console.log("----------------------------- query")
+
+        this.fetchProductosByBuscar(this.$route.query.buscar);
     }
     else
     {
@@ -371,7 +388,32 @@ export default {
       } catch (e) {
 
       }
-    }
+    },
+    fetchProductosByBuscar(paramBuscar) {
+
+      try {
+       fetch(process.env.MIX_API_URL+"api/productos?buscar="+paramBuscar, {
+          method: "GET",
+          headers: { "Content-Type": "application/json" },
+          credentials: "include",
+        })
+          .then((response) => response.json())
+          .then((data) => {
+            var resp = data;
+
+            if (data) {
+              this.tablaProductos = data.respuesta;
+              console.log("this.tablaProductos");
+              console.log(this.tablaProductos);
+            } else {
+
+              this.tablaProductos = [];
+            }
+          });
+      } catch (e) {
+
+      }
+    },
   },
 };
 </script>
@@ -389,5 +431,13 @@ export default {
 .imgProducto
 {
     border-radius: 3em;
+}
+
+.descripcionCorta {
+  overflow: hidden;
+  display: -webkit-box;
+  min-height: 6em;
+  -webkit-line-clamp: 4;
+  -webkit-box-orient: vertical;
 }
 </style>

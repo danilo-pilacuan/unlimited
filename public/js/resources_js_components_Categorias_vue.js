@@ -227,42 +227,6 @@ var render = function render() {
     }])
   }), _vm._v(" "), _c("b-table-column", {
     attrs: {
-      label: "Foto",
-      field: "urlFotoCategoria",
-      searchable: ""
-    },
-    scopedSlots: _vm._u([{
-      key: "default",
-      fn: function fn(props) {
-        return [_vm._v("\n          " + _vm._s(props.row.urlFotoCategoria) + "\n        ")];
-      }
-    }])
-  }), _vm._v(" "), _c("b-table-column", {
-    attrs: {
-      label: "Estado",
-      field: "estadoCategoria",
-      searchable: ""
-    },
-    scopedSlots: _vm._u([{
-      key: "default",
-      fn: function fn(props) {
-        return [_vm._v("\n          " + _vm._s(props.row.estadoCategoria) + "\n        ")];
-      }
-    }])
-  }), _vm._v(" "), _c("b-table-column", {
-    attrs: {
-      label: "Descuento",
-      field: "descuentoCategoria",
-      searchable: ""
-    },
-    scopedSlots: _vm._u([{
-      key: "default",
-      fn: function fn(props) {
-        return [_vm._v("\n          " + _vm._s(props.row.descuentoCategoria) + "\n        ")];
-      }
-    }])
-  }), _vm._v(" "), _c("b-table-column", {
-    attrs: {
       field: "actions",
       label: "Acciones"
     },

@@ -28,6 +28,17 @@ __webpack_require__.r(__webpack_exports__);
   mounted: function mounted() {
     // console.log("this.$route.path")
     // console.log(this.$route.path)
+    if (this.currentUser.urlFoto) {
+      var newImage = {
+        path: "/" + this.currentUser.urlFoto,
+        "default": 1,
+        highlight: 1,
+        caption: ""
+      };
+      this.images = [];
+      this.images.push(newImage);
+    }
+
     if (this.$route.path == "/usuario/perfil" || this.$route.path == "/usuario") {
       this.activarPerfil = true;
       this.activarPedidos = false;
@@ -46,6 +57,17 @@ __webpack_require__.r(__webpack_exports__);
       this.activarPerfil = false;
       this.activarPedidos = false;
       this.activarDirecciones = true;
+    }
+  },
+  computed: {
+    authenticated: function authenticated() {
+      return this.$store.state.authenticated;
+    },
+    userType: function userType() {
+      return this.$store.state.userType;
+    },
+    currentUser: function currentUser() {
+      return this.$store.state.currentUser;
     }
   },
   methods: {
@@ -76,8 +98,36 @@ __webpack_require__.r(__webpack_exports__);
     editImage: function editImage(formData, index, fileList) {
       console.log('edit data', formData, index, fileList);
     },
-    uploadImageSuccess: function uploadImageSuccess(formData, index, fileList) {
+    updateUser: function updateUser(paramUrlFoto) {
       var _this = this;
+
+      var userAux = JSON.parse(JSON.stringify(this.currentUser));
+      userAux.urlFoto = paramUrlFoto;
+      fetch("http://192.168.0.100:8000/" + "api/usuarios/" + this.currentUser.id, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        credentials: "include",
+        body: JSON.stringify({
+          urlFoto: paramUrlFoto
+        })
+      }).then(function (response) {
+        return response.json();
+      }).then(function (data) {
+        var resp = data.respuesta;
+
+        if (resp) {
+          console.log("🚀 ~ file: PerfilUsuario.vue ~ line 169 ~ .then ~ resp", resp);
+
+          _this.$buefy.dialog.alert("Foto de perfil actualizada correctamente");
+
+          _this.$store.dispatch("setCurrentUser", userAux);
+        }
+      });
+    },
+    uploadImageSuccess: function uploadImageSuccess(formData, index, fileList) {
+      var _this2 = this;
 
       //console.log('data', formData, index, fileList)
       // Upload image api
@@ -89,9 +139,11 @@ __webpack_require__.r(__webpack_exports__);
           highlight: 1,
           caption: ""
         };
-        _this.images = [];
+        _this2.images = [];
 
-        _this.images.push(newImage); // this.producto.urlsFotos=""
+        _this2.images.push(newImage);
+
+        _this2.updateUser(response.data.respuesta.url); // this.producto.urlsFotos=""
         // this.images.forEach(element => {
         //     this.producto.urlsFotos=this.producto.urlsFotos+element.path+";"
         // });
@@ -108,6 +160,9 @@ __webpack_require__.r(__webpack_exports__);
     },
     doneDeleteImg: function doneDeleteImg(index) {
       this.images = [];
+      var userAux = JSON.parse(JSON.stringify(this.currentUser));
+      userAux.urlFoto = null;
+      this.$store.dispatch("setCurrentUser", userAux);
     }
   }
 });
@@ -139,11 +194,13 @@ var render = function render() {
   }, [_c("div", {
     staticClass: "column is-2"
   }, [_c("div", {
-    staticClass: "columns is-centered is-multiline"
+    staticClass: "columns is-multiline"
   }, [_c("div", {
-    staticClass: "column is-8"
+    staticClass: "column is-12"
   }, [_c("div", {
     staticClass: "has-text-centered"
+  }, [_c("div", {
+    staticClass: "centerProfile"
   }, [_c("vue-upload-multiple-image", {
     attrs: {
       "data-images": _vm.images,
@@ -166,7 +223,7 @@ var render = function render() {
       },
       "edit-image": _vm.editImage
     }
-  })], 1)]), _vm._v(" "), _c("div", {
+  })], 1)])]), _vm._v(" "), _c("div", {
     staticClass: "column is-12"
   }, [_c("b-sidebar", {
     attrs: {
@@ -229,7 +286,7 @@ var render = function render() {
       }
     }
   })], 1)], 1)], 1)])], 1)])]), _vm._v(" "), _c("div", {
-    staticClass: "column is-8"
+    staticClass: "column is-10 mostrarBorde"
   }, [_c("router-view")], 1)])])]);
 };
 
@@ -386,7 +443,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_laravel_mix_node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, "\n.profileBackground {\n  background-color: #ffffff;\n}\n", ""]);
+___CSS_LOADER_EXPORT___.push([module.id, "\n.profileBackground {\n  background-color: #ffffff;\n}\n.b-sidebar .sidebar-content\n{\n    width: 100% !important;\n}\n.centerProfile\n{\n    align-self: center;\n    display: inline-flex;\n}\n.mostrarBorde\n{\n    box-shadow: -2px 0px 3px 0px rgba(0, 0, 0, 0.10);\n}\n", ""]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 

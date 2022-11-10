@@ -38,30 +38,8 @@
           >
             {{ props.row.descripcion }}
           </b-table-column>
-          <b-table-column
-            v-slot="props"
-            label="Foto"
-            field="urlFotoCategoria"
-            searchable
-          >
-            {{ props.row.urlFotoCategoria }}
-          </b-table-column>
-          <b-table-column
-            v-slot="props"
-            label="Estado"
-            field="estadoCategoria"
-            searchable
-          >
-            {{ props.row.estadoCategoria }}
-          </b-table-column>
-          <b-table-column
-            v-slot="props"
-            label="Descuento"
-            field="descuentoCategoria"
-            searchable
-          >
-            {{ props.row.descuentoCategoria }}
-          </b-table-column>
+
+
 
 
 

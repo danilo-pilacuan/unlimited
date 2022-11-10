@@ -41,6 +41,36 @@ class ProductoController extends Controller
             }
 
         }
+        elseif(request('buscar'))
+        {
+
+            $productos=Producto::with('Categoria','caracteristicasProducto')->where('nombre','LIKE', '%'.request('buscar').'%')->
+            orWhere('descripcionCorta','LIKE', '%'.request('buscar').'%')->orderByDesc('id')->get()->makeHidden(['descripcionLarga']);
+            return response()->json([
+                "respuesta"=>$productos
+            ]);
+
+        }
+        elseif(request('nuevos'))
+        {
+
+            $productos=Producto::with('Categoria','caracteristicasProducto')->where('nombre','LIKE', '%'.request('buscar').'%')->
+            orWhere('descripcionCorta','LIKE', '%'.request('buscar').'%')->orderByDesc('updated_at')->get()->makeHidden(['descripcionLarga']);
+            return response()->json([
+                "respuesta"=>$productos
+            ]);
+
+        }
+        elseif(request('populares'))
+        {
+
+            $productos=Producto::with('Categoria','caracteristicasProducto')->where('nombre','LIKE', '%'.request('buscar').'%')->
+            orWhere('descripcionCorta','LIKE', '%'.request('buscar').'%')->orderByDesc('visitas')->get()->makeHidden(['descripcionLarga']);
+            return response()->json([
+                "respuesta"=>$productos
+            ]);
+
+        }
         else
         {
             $productos=Producto::with('Categoria','caracteristicasProducto')->orderByDesc('id')->get()->makeHidden(['descripcionLarga']);
@@ -203,15 +233,137 @@ class ProductoController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Producto $producto)
+    public function update(Request $request, $id)
     {
-        $output = new ConsoleOutput();
-        $output->writeln(var_export($producto,true));
-        $producto->fill($request->post())->save();
-        return response()->json([
-            "respuesta"=>$producto
-        ]);
+        // $output = new ConsoleOutput();
+        // $output->writeln(var_export($producto,true));
+        // $producto->fill($request->post())->save();
+        // return response()->json([
+        //     "respuesta"=>$producto
+        // ]);
+
+        $producto=Producto::find($id);
+        if($producto)
+        {
+            $producto->fill($request->post())->save();
+
+            ////----------------------------------------------------------------------------------------------------------
+            ////----------------------------------------------------------------------------------------------------------
+            $producto=Producto::find($id);
+            if($producto->tipo==1)
+            {
+                $productoAux=json_decode($request->getContent());
+                foreach($productoAux->caracteristicas_producto as $caracteristicaAux)
+                {
+                    $caracteristicaObj=[
+                        "id"=>$caracteristicaAux->id,
+                        "descripcion"=>$caracteristicaAux->descripcion,
+                        "color"=>$caracteristicaAux->color,
+                        "urlFoto"=>$caracteristicaAux->urlFoto,
+                        "existencias"=>$caracteristicaAux->existencias,
+                        "tipo"=>$caracteristicaAux->tipo,
+                        "idProducto"=>$producto->id
+                    ];
+                    $caracteristica=CaracteristicaProducto::find($caracteristicaAux->id);
+                    $caracteristica->fill($caracteristicaObj)->save();
+                }
+            }
+            elseif($producto->tipo==2)
+            {
+                $productoAux=json_decode($request->getContent());
+
+                foreach($productoAux->caracteristicas_producto as $caracteristicaAux)
+                {
+
+                    $caracteristicaObj=[
+                        "id"=>$caracteristicaAux->id,
+                        "descripcion"=>$caracteristicaAux->descripcion,
+                        "color"=>$caracteristicaAux->color,
+                        "urlFoto"=>$caracteristicaAux->urlFoto,
+                        "existencias"=>$caracteristicaAux->existencias,
+                        "tipo"=>$caracteristicaAux->tipo,
+                        "idProducto"=>$producto->id
+                    ];
+                    //$caracteristica=CaracteristicaProducto::create($caracteristicaObj);
+                    $caracteristica=CaracteristicaProducto::find($caracteristicaAux->id);
+                    $caracteristica->fill($caracteristicaObj)->save();
+
+                    foreach($caracteristicaAux->tamanios_caracteristica as $tamanioAux)
+                    {
+                        $tamanioCarObj=[
+                            'id' => $tamanioAux->id,
+                            'existencias' => $tamanioAux->existencias,
+                            'idTamanio' => $tamanioAux->idTamanio,
+                            'idCaracteristicaProducto' => $caracteristica->id,
+                        ];
+                        //$tamanioCaracteristica=TamanioCaracteristica::create($tamanioCarObj);
+                        $tamanioCaracteristica=TamanioCaracteristica::find($tamanioAux->id);
+                        $tamanioCaracteristica->fill($tamanioCarObj)->save();
+                    }
+                }
+
+            }
+            elseif($producto->tipo==3)
+            {
+                $productoAux=json_decode($request->getContent());
+                foreach($productoAux->tamanios_producto as $tamanioAux)
+                {
+                    $tamanioProdObj=[
+                        'id' => $tamanioAux->id,
+                        'existencias' => $tamanioAux->existencias,
+                        'idTamanio' => $tamanioAux->idTamanio,
+                        'idProducto' => $producto->id
+                    ];
+                    //$tamanioProducto=tamanioProducto::create($tamanioProdObj);
+                    $tamanioProducto=tamanioProducto::find($tamanioAux->id);
+                    $tamanioProducto->fill($tamanioProdObj)->save();
+                }
+            }
+
+            ////----------------------------------------------------------------------------------------------------------
+            ////----------------------------------------------------------------------------------------------------------
+
+            return response()->json([
+                "respuesta"=>$producto
+            ]);
+        }
+        else
+        {
+            return response()->json([
+                "resultado"=>"fail"
+            ]);
+        }
+
+
     }
+
+
+    public function updateVisitas(Request $request, $id)
+    {
+
+        $producto=Producto::find($id);
+        if($producto)
+        {
+            $producto->visitas=$producto->visitas+1;
+            $producto->save();
+            return response()->json([
+                "resultado"=>"ok"
+            ]);
+        }
+        else
+        {
+            return response()->json([
+                "resultado"=>"fail"
+            ]);
+        }
+
+
+    }
+
+    // public function updateStock(Request $request, $id)
+    // {
+    //     $producto=Producto::find($id);
+    // }
 
     /**
      * Remove the specified resource from storage.

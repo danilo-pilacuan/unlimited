@@ -4,6 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Models\Orden;
 use App\Models\RegistroCarrito;
+use App\Models\Producto;
+use App\Models\CaracteristicaProducto;
+use App\Models\TamanioCaracteristica;
+use App\Models\TamanioProducto;
 use Illuminate\Http\Request;
 use Symfony\Component\Console\Output\ConsoleOutput;
 
@@ -21,7 +25,7 @@ class OrdenController extends Controller
 
         //$productos=Producto::with('Categoria','caracteristicasProducto')->get()->makeHidden(['descripcionLarga']);
 
-        $ordenes=Orden::with('RegistrosCarrito','RegistrosCarrito.Caracteristica','RegistrosCarrito.Producto','RegistrosCarrito.TamanioCaracteristica','RegistrosCarrito.TamanioProducto')->get();
+        $ordenes=Orden::with('RegistrosCarrito','RegistrosCarrito.Caracteristica','RegistrosCarrito.Producto','RegistrosCarrito.TamanioCaracteristica','RegistrosCarrito.TamanioProducto','User')->orderByDesc('id')->get();
         return response()->json([
             "respuesta"=>$ordenes
         ]);
@@ -91,6 +95,80 @@ class OrdenController extends Controller
                 $itemCarritoObj->cantidad =$itemCarrito->cantidad;
                 $itemCarritoObj->idOrden=$orden->id;
                 $itemCarritoObj->save();
+
+                if($itemCarrito->tipoRegistro==0)
+                {
+                    $producto=Producto::find($itemCarrito->idProducto);
+                    if($producto)
+                    {
+                        $producto->existencias=$producto->existencias-$itemCarrito->cantidad;
+                        if($producto->existencias<0)
+                        {
+                            return response()->json([
+                                "respuesta"=>"No hay stock suficiente en producto"
+                            ]);
+                        }
+
+                        $producto->save();
+
+                        //$usuario->fill($request->post())->save();
+
+                    }
+
+                }
+
+                if($itemCarrito->tipoRegistro==1)
+                {
+                    $caracteristicaProducto=CaracteristicaProducto::find($itemCarrito->idCaracteristica);
+                    if($caracteristicaProducto)
+                    {
+                        $caracteristicaProducto->existencias=$caracteristicaProducto->existencias-$itemCarrito->cantidad;
+                        if($caracteristicaProducto->existencias<0)
+                        {
+                            return response()->json([
+                                "respuesta"=>"No hay stock suficiente en caracteristicaProducto"
+                            ]);
+                        }
+
+                        $caracteristicaProducto->save();
+
+                    }
+                }
+
+                if($itemCarrito->tipoRegistro==2)
+                {
+                    $tamanioCaracteristica=TamanioCaracteristica::find($itemCarrito->idTamanioCaracteristica);
+                    if($tamanioCaracteristica)
+                    {
+                        $tamanioCaracteristica->existencias=$tamanioCaracteristica->existencias-$itemCarrito->cantidad;
+                        if($tamanioCaracteristica->existencias<0)
+                        {
+                            return response()->json([
+                                "respuesta"=>"No hay stock suficiente en tamanioCaracteristica"
+                            ]);
+                        }
+
+                        $tamanioCaracteristica->save();
+                    }
+                }
+                if($itemCarrito->tipoRegistro==3)
+                {
+                    $tamanioProducto=TamanioProducto::find($itemCarrito->idTamanioProducto);
+                    if($tamanioProducto)
+                    {
+                        $tamanioProducto->existencias=$tamanioProducto->existencias-$itemCarrito->cantidad;
+                        if($tamanioProducto->existencias<0)
+                        {
+                            return response()->json([
+                                "respuesta"=>"No hay stock suficiente en tamanioProducto"
+                            ]);
+                        }
+
+                        $tamanioProducto->save();
+
+                    }
+
+                }
             }
 
         }
@@ -124,7 +202,7 @@ class OrdenController extends Controller
     {
         $output = new ConsoleOutput();
         $output->writeln("showww");
-        $orden=Orden::find($id);
+        $orden=Orden::with('User','User.Direccion')->find($id);
         return response()->json([
             "respuesta"=>$orden
         ]);
@@ -133,7 +211,7 @@ class OrdenController extends Controller
 
     public function getOrdenByUserId($id)
     {
-        $ordenes=Orden::where('idUsuario',$id)->get();
+        $ordenes=Orden::where('idUsuario',$id)->orderByDesc('id')->get();
 
         return response()->json([
             "respuesta"=>$ordenes
@@ -165,7 +243,8 @@ class OrdenController extends Controller
         $orden=Orden::find($id);
         if($orden)
         {
-            $orden->fill($request->post())->save();
+            $orden->estadoOrden=1;
+            $orden->save();
             return response()->json([
                 "respuesta"=>$orden
             ]);

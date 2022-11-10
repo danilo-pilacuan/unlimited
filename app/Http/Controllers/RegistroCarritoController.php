@@ -65,7 +65,7 @@ class RegistroCarritoController extends Controller
         $output = new ConsoleOutput();
         $output->writeln("get by ordid");
 
-        $registros=RegistroCarrito::where('idOrden',$id)->get();
+        $registros=RegistroCarrito::with('Caracteristica','TamanioProducto','TamanioCaracteristica','Producto','Orden','Orden.User')->where('idOrden',$id)->get();
 
         return response()->json([
             "respuesta"=>$registros

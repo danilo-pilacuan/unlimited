@@ -31,6 +31,7 @@ class AuthController extends Controller
         $user->telefono = $request->telefono;
         $user->fechaNacimiento = $request->fechaNacimiento;
         $user->email = $request->email;
+        $user->urlFoto = $request->urlFoto;
         $user->password = Hash::make($request->password);
         $user->tipoUsuario = $request->tipoUsuario;
         $user->save();

@@ -4,8 +4,10 @@
       <div class="block">
         <div class="columns">
           <div class="column is-4"></div>
-          <div class="column">
-            <section class="section">
+          <div class="column mt-5">
+            <div class="card mt-5 p-5">
+                <section class="section">
+                    <p class="subtitle has-text-centered has-text-weight-bold">Iniciar Sesión</p>
               <form @submit.prevent="submit">
                 <!-- <b-checkbox v-model="hasError">Show errors</b-checkbox> -->
                 <b-field
@@ -39,9 +41,10 @@
                   :message="{ 'Login fallido': loginFailed }"
                 >
                 </b-field>
-                <b-button type="is-primary" @click="submit" label="Iniciar Sesión" />
+                <b-button type="is-primary" @click="submit" label="Iniciar Sesión" size="is-medium"/>
               </form>
             </section>
+            </div>
           </div>
           <div class="column is-4"></div>
         </div>
@@ -61,6 +64,11 @@ export default {
       validateUsername: false,
     };
   },
+  mounted()
+    {
+
+        console.log("🚀 ~ file: Login.vue ~ line 69 ~ this.$route", this.$route.name)
+    },
   computed: {
     authenticated() {
       return this.$store.state.authenticated;
@@ -121,3 +129,9 @@ export default {
   },
 };
 </script>
+<style>
+html, body {
+  height: 100%;
+}
+
+</style>
