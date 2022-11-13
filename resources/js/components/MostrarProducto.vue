@@ -46,7 +46,7 @@
                           ) in producto.caracteristicas_producto"
                           :key="indexCar"
                         >
-                          <p
+                          <p v-if="caracteristica.existencias>0"
                           v-bind:class="{ colorSeleccionado: caracteristica.seleccionado }"
                             class="subtitle"
                             :style="{
@@ -136,7 +136,7 @@
                                 @input="handleSelectTamCaracteristica"
                               >
                                 <option
-                                  v-for="option in tamaniosCaractesisticaSelected"
+                                  v-for="option in tamaniosCaractesisticaSelected.filter(element => element.existencias > 0)"
                                   :value="option"
                                   :key="option.id"
                                 >
@@ -167,7 +167,7 @@
                               @input="handleSelectTamProducto"
                             >
                               <option
-                                v-for="option in producto.tamanios_producto"
+                                v-for="option in producto.tamanios_producto.filter(element => element.existencias > 0)"
                                 :value="option"
                                 :key="option.id"
                               >
@@ -185,7 +185,7 @@
                     <div class="column is-4">
                         <b-numberinput
                             step="1"
-                            :max="20"
+                            :max="maxProductos"
                             :min="1"
                             v-model="registroCarrito.cantidad"
                             aria-minus-label="Decrement by 0.01"
@@ -230,6 +230,7 @@
 export default {
   data() {
     return {
+      maxProductos:0,
       envAPP: process.env.MIX_API_URL,
       carousels: [
         { text: "Slide 1", color: "primary" },
@@ -324,6 +325,8 @@ export default {
       console.log(this.tamProductoSelected);
       this.registroCarrito.tamanioProducto = tamanioProducto;
       this.disableButton = false;
+      this.maxProductos=tamanioProducto.existencias
+      this.registroCarrito.cantidad=1
     },
     handleSelectTamCaracteristica(tamanioCaracteristica) {
       console.log("dsasd");
@@ -332,6 +335,8 @@ export default {
       console.log(this.tamCaracteristicaSelected);
       this.registroCarrito.tamanioCaracteristica = tamanioCaracteristica;
       this.disableButton = false;
+      this.maxProductos=tamanioCaracteristica.existencias;
+      this.registroCarrito.cantidad=1
     },
     handleSeleccionCaracteristica(caracteristica) {
 
@@ -354,6 +359,8 @@ export default {
       console.log(caracteristica);
       console.log("color");
       console.log(caracteristica.color);
+      this.maxProductos=caracteristica.existencias
+      this.registroCarrito.cantidad=1
     },
     addToCart() {
       console.log("fasad");
@@ -443,6 +450,7 @@ export default {
                   idTamanioProducto: null,
                   cantidad: 1,
                 };
+                this.maxProductos=this.producto.existencias
               }
               if (this.producto.tipo == 1) {
                 this.disableButton=false;
@@ -469,6 +477,7 @@ export default {
                   idTamanioProducto: null,
                   cantidad: 1,
                 };
+                this.maxProductos=this.producto.caracteristicas_producto[0].existencias;
               }
               if (this.producto.tipo == 2) {
 
@@ -496,6 +505,7 @@ export default {
                   idTamanioProducto: null,
                   cantidad: 1,
                 };
+                this.maxProductos=this.producto.caracteristicas_producto[0].existencias;
               }
               if (this.producto.tipo == 3) {
                 this.arrayImgs = this.producto.urlsFotos.split(";");
@@ -513,6 +523,7 @@ export default {
                   idTamanioProducto: 0,
                   cantidad: 1,
                 };
+                this.maxProductos=this.producto.tamanios_producto[0].existencias;
               }
               console.log("this.producto");
               console.log(this.producto);

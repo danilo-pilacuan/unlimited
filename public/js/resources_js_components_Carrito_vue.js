@@ -109,26 +109,38 @@ __webpack_require__.r(__webpack_exports__);
     }
   },
   mounted: function mounted() {
-    var auxtotal = 0;
-    this.cartList.itemsList.forEach(function (element) {
-      console.log("🚀 ~ file: Carrito.vue ~ line 270 ~ mounted ~ element", element);
-
-      if (element.producto.estado == 1) {
-        auxtotal = auxtotal + element.producto.precio * element.cantidad;
-      }
-
-      if (element.producto.estado == 2) {
-        auxtotal = auxtotal + element.producto.precio * (1 - element.producto.descuento / 100) * element.cantidad;
-      }
-
-      console.log("🚀 ~ file: Carrito.vue ~ line 272 ~ mounted ~ element.cantidad", element.cantidad);
-      console.log("🚀 ~ file: Carrito.vue ~ line 272 ~ mounted ~ element.producto.precio", element.producto.precio);
-    });
-    this.total = auxtotal;
-    this.subtotal = auxtotal * 0.88;
-    this.iva = auxtotal * 0.12;
+    this.calcularTotal();
   },
   methods: {
+    calcularTotal: function calcularTotal() {
+      var auxtotal = 0;
+      this.cartList.itemsList.forEach(function (element) {
+        console.log("🚀 ~ file: Carrito.vue ~ line 270 ~ mounted ~ element", element);
+
+        if (element.producto.estado == 1) {
+          auxtotal = auxtotal + element.producto.precio * element.cantidad;
+        }
+
+        if (element.producto.estado == 2) {
+          auxtotal = auxtotal + element.producto.precio * (1 - element.producto.descuento / 100) * element.cantidad;
+        }
+
+        console.log("🚀 ~ file: Carrito.vue ~ line 272 ~ mounted ~ element.cantidad", element.cantidad);
+        console.log("🚀 ~ file: Carrito.vue ~ line 272 ~ mounted ~ element.producto.precio", element.producto.precio);
+      });
+      this.total = auxtotal;
+      this.subtotal = auxtotal * 0.88;
+      this.iva = auxtotal * 0.12;
+    },
+    confirmDelete: function confirmDelete(producto) {
+      var cartListAux = this.cartList.itemsList;
+      cartListAux.splice(cartListAux.indexOf(producto), 1);
+      var cartAux = {
+        itemsList: cartListAux
+      };
+      this.$store.dispatch("setCartList", cartAux);
+      this.calcularTotal();
+    },
     getUrlFoto: function getUrlFoto(producto) {
       var urlImg = "";
 
@@ -174,37 +186,41 @@ __webpack_require__.r(__webpack_exports__);
       //     this.fetchRegistroCarrito(element)
       // });
       if (this.authenticated) {
-        try {
-          fetch("http://192.168.0.100:8000/" + "api/ordenes", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-              Accept: "application/json"
-            },
-            credentials: "include",
-            body: JSON.stringify({
-              currentUser: this.currentUser,
-              itemsList: this.cartList.itemsList
-            })
-          }).then(function (response) {
-            return response.json();
-          }).then(function (data) {
-            var resp = data;
+        if (this.cartList.itemsList.length > 0) {
+          try {
+            fetch("http://192.168.0.100:8000/" + "api/ordenes", {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+                Accept: "application/json"
+              },
+              credentials: "include",
+              body: JSON.stringify({
+                currentUser: this.currentUser,
+                itemsList: this.cartList.itemsList
+              })
+            }).then(function (response) {
+              return response.json();
+            }).then(function (data) {
+              var resp = data;
 
-            if (data) {
-              // this.tablaProductos = data.respuesta;
-              // console.log("this.datasssssssssssss");
-              // console.log(resp);
-              //this.$buefy.dialog.alert("Usuario agregado correctamente");
-              _this.emptyCart();
+              if (data) {
+                // this.tablaProductos = data.respuesta;
+                // console.log("this.datasssssssssssss");
+                // console.log(resp);
+                //this.$buefy.dialog.alert("Usuario agregado correctamente");
+                _this.emptyCart();
 
-              _this.$router.push("/usuario/pedidos");
-            } else {//this.$router.push("/login")
-              //this.tablaProductos = [];
-            }
-          });
-        } catch (e) {
-          this.$store.dispatch("setAuth", false);
+                _this.$router.push("/usuario/pedidos");
+              } else {//this.$router.push("/login")
+                //this.tablaProductos = [];
+              }
+            });
+          } catch (e) {
+            this.$store.dispatch("setAuth", false);
+          }
+        } else {
+          this.$buefy.dialog.alert("Agregue productos al carrito");
         }
       } else {
         this.$router.push("/login");
@@ -252,6 +268,7 @@ __webpack_require__.r(__webpack_exports__);
         itemsList: []
       };
       this.$store.dispatch("setCartList", cartAux);
+      this.calcularTotal();
     },
     fetchProductos: function fetchProductos() {
       var _this3 = this;
@@ -524,6 +541,9 @@ var render = function render() {
             "controls-rounded": "",
             "aria-minus-label": "Decrement by 0.01",
             "aria-plus-label": "Increment by 0.01"
+          },
+          on: {
+            input: _vm.calcularTotal
           },
           model: {
             value: props.row.cantidad,

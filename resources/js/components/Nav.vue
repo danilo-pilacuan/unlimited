@@ -156,10 +156,15 @@ export default {
     return {
       imgSrc: process.env.MIX_API_URL + "imgs/logo.png",
       tablaCategorias: [],
-      inputBuscar:""
+      inputBuscar:"",
+      inicioText:"Inicio"
     };
   },
+  expose: ['fetchCategorias',"printfFromNav"],
   methods: {
+    printfFromNav(){
+        console.log("4444444444444444444444444444444")
+    },
     buscar()
     {
         let buscarParam=this.inputBuscar;

@@ -147,6 +147,8 @@ __webpack_require__.r(__webpack_exports__);
             _this4.tablaDatos = data.respuesta;
             console.log("this.tablaDatos");
             console.log(_this4.tablaDatos);
+
+            _this4.$emit('actualizarCategorias');
           } else {
             //this.$router.push("/login")
             _this4.tablaDatos = [];
@@ -323,7 +325,7 @@ var render = function render() {
     }
   }, [_c("b-input", {
     attrs: {
-      maxlength: "50"
+      maxlength: "200"
     },
     model: {
       value: _vm.categoria.descripcion,
@@ -332,34 +334,7 @@ var render = function render() {
       },
       expression: "categoria.descripcion"
     }
-  })], 1)], 1)]), _vm._v(" "), _c("div", {
-    staticClass: "columns"
-  }, [_c("div", {
-    staticClass: "column"
-  }, [_c("b-field", {
-    attrs: {
-      label: "Estado"
-    }
-  }, [_c("b-select", {
-    attrs: {
-      placeholder: "Seleccionar Estado"
-    },
-    model: {
-      value: _vm.categoria.estado,
-      callback: function callback($$v) {
-        _vm.$set(_vm.categoria, "estado", $$v);
-      },
-      expression: "categoria.estado"
-    }
-  }, [_c("option", {
-    attrs: {
-      value: "0"
-    }
-  }, [_vm._v("Sin Descuento")]), _vm._v(" "), _c("option", {
-    attrs: {
-      value: "1"
-    }
-  }, [_vm._v("Con Descuento")])])], 1)], 1)])]), _vm._v(" "), _c("footer", {
+  })], 1)], 1)])]), _vm._v(" "), _c("footer", {
     staticClass: "modal-card-foot"
   }, [_c("div", {
     staticClass: "columns"

@@ -2,17 +2,17 @@
 <footer class="footerMargin">
   <div class="content has-text-centered p-5">
     <div class="columns">
-        <div class="column is-1"></div>
-        <div class="column is-2">
+        <div class="column is-3"></div>
+        <div class="column is-4">
             <div class="has-text-left pl-5">
                 <p>Unlimited Store 2022</p>
                 <p>Términos y Condiciones</p>
             </div>
         </div>
-            <div class="column is-2">
+            <!-- <div class="column is-2">
 
-            </div>
-            <div class="column is-2">
+            </div> -->
+            <!-- <div class="column is-2">
                 <div class="has-text-left pl-5">
                     <p>Categorías:</p>
                     <p v-for="(categoria, index) in tablaCategorias"
@@ -27,17 +27,21 @@
                 </div>
 
 
-            </div>
-            <div class="column is-5 has-text-centered">
+            </div> -->
+            <div class="column is-4 has-text-left">
                 <p>Encuéntranos:</p>
-                <p> <b-icon
+                <p> <a href="https://www.google.com/maps/place/SRI+Agencia+Norte/@-0.124435,-78.4738357,15.75z/data=!4m5!3m4!1s0x91d5855dd8442ba7:0x9ad481787da29c51!8m2!3d-0.1295124!4d-78.480898"
+                target="_blank" style="all: unset; cursor: pointer; margin-bottom:5px !important;"> <b-icon
                 icon="map-marker"
                 size="is-small">
-            </b-icon> Dirección:</p>
-                <p> <b-icon
+            </b-icon>  Dirección: Av 10 de agosto y 6 de diciembre</a></p>
+
+                <p> <a href="https://www.instagram.com/unlimited_store_quito/" target="_blank" style="all: unset; cursor: pointer;"> <b-icon
                 icon="instagram"
                 size="is-small">
-            </b-icon> @unlimited</p>
+            </b-icon>  @unlimited_store_quito</a> </p>
+
+
 
             </div>
     </div>

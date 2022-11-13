@@ -14,6 +14,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   data: function data() {
     return {
+      maxProductos: 0,
       envAPP: "http://192.168.0.100:8000/",
       carousels: [{
         text: "Slide 1",
@@ -117,6 +118,8 @@ __webpack_require__.r(__webpack_exports__);
       console.log(this.tamProductoSelected);
       this.registroCarrito.tamanioProducto = tamanioProducto;
       this.disableButton = false;
+      this.maxProductos = tamanioProducto.existencias;
+      this.registroCarrito.cantidad = 1;
     },
     handleSelectTamCaracteristica: function handleSelectTamCaracteristica(tamanioCaracteristica) {
       console.log("dsasd");
@@ -125,6 +128,8 @@ __webpack_require__.r(__webpack_exports__);
       console.log(this.tamCaracteristicaSelected);
       this.registroCarrito.tamanioCaracteristica = tamanioCaracteristica;
       this.disableButton = false;
+      this.maxProductos = tamanioCaracteristica.existencias;
+      this.registroCarrito.cantidad = 1;
     },
     handleSeleccionCaracteristica: function handleSeleccionCaracteristica(caracteristica) {
       this.producto.caracteristicas_producto.forEach(function (element) {
@@ -146,6 +151,8 @@ __webpack_require__.r(__webpack_exports__);
       console.log(caracteristica);
       console.log("color");
       console.log(caracteristica.color);
+      this.maxProductos = caracteristica.existencias;
+      this.registroCarrito.cantidad = 1;
     },
     addToCart: function addToCart() {
       console.log("fasad");
@@ -235,6 +242,7 @@ __webpack_require__.r(__webpack_exports__);
                 idTamanioProducto: null,
                 cantidad: 1
               };
+              _this.maxProductos = _this.producto.existencias;
             }
 
             if (_this.producto.tipo == 1) {
@@ -261,6 +269,7 @@ __webpack_require__.r(__webpack_exports__);
                 idTamanioProducto: null,
                 cantidad: 1
               };
+              _this.maxProductos = _this.producto.caracteristicas_producto[0].existencias;
             }
 
             if (_this.producto.tipo == 2) {
@@ -287,6 +296,7 @@ __webpack_require__.r(__webpack_exports__);
                 idTamanioProducto: null,
                 cantidad: 1
               };
+              _this.maxProductos = _this.producto.caracteristicas_producto[0].existencias;
             }
 
             if (_this.producto.tipo == 3) {
@@ -306,6 +316,7 @@ __webpack_require__.r(__webpack_exports__);
                 idTamanioProducto: 0,
                 cantidad: 1
               };
+              _this.maxProductos = _this.producto.tamanios_producto[0].existencias;
             }
 
             console.log("this.producto");
@@ -409,7 +420,7 @@ var render = function render() {
     return _c("div", {
       key: indexCar,
       staticClass: "column is-2"
-    }, [_c("p", {
+    }, [caracteristica.existencias > 0 ? _c("p", {
       staticClass: "subtitle",
       "class": {
         colorSeleccionado: caracteristica.seleccionado
@@ -427,7 +438,7 @@ var render = function render() {
           return _vm.handleSeleccionCaracteristica(caracteristica);
         }
       }
-    })]);
+    }) : _vm._e()]);
   })], 2)])]) : _vm._e(), _vm._v(" "), _vm.producto.tipo == 2 ? _c("div", {
     staticClass: "container"
   }, [_c("div", {
@@ -484,7 +495,9 @@ var render = function render() {
       },
       expression: "tamCaracteristicaSelected"
     }
-  }, _vm._l(_vm.tamaniosCaractesisticaSelected, function (option) {
+  }, _vm._l(_vm.tamaniosCaractesisticaSelected.filter(function (element) {
+    return element.existencias > 0;
+  }), function (option) {
     return _c("option", {
       key: option.id,
       domProps: {
@@ -518,7 +531,9 @@ var render = function render() {
       },
       expression: "tamProductoSelected"
     }
-  }, _vm._l(_vm.producto.tamanios_producto, function (option) {
+  }, _vm._l(_vm.producto.tamanios_producto.filter(function (element) {
+    return element.existencias > 0;
+  }), function (option) {
     return _c("option", {
       key: option.id,
       domProps: {
@@ -532,7 +547,7 @@ var render = function render() {
   }, [_c("b-numberinput", {
     attrs: {
       step: "1",
-      max: 20,
+      max: _vm.maxProductos,
       min: 1,
       "aria-minus-label": "Decrement by 0.01",
       "aria-plus-label": "Increment by 0.01"

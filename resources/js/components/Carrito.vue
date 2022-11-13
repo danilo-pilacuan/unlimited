@@ -94,7 +94,8 @@
                     controls-rounded
                     v-model="props.row.cantidad"
                     aria-minus-label="Decrement by 0.01"
-                    aria-plus-label="Increment by 0.01">
+                    aria-plus-label="Increment by 0.01"
+                    @input="calcularTotal">
                   </b-numberinput>
 
                     <!-- <input class="input" type="number" v-model="props.row.cantidad"> -->
@@ -268,26 +269,40 @@ export default {
     },
   },
   mounted() {
-    let auxtotal=0;
-    this.cartList.itemsList.forEach(element => {
-
-        console.log("🚀 ~ file: Carrito.vue ~ line 270 ~ mounted ~ element", element)
-        if(element.producto.estado==1)
-        {
-            auxtotal=auxtotal+(element.producto.precio*element.cantidad)
-        }
-        if(element.producto.estado==2)
-        {
-            auxtotal=auxtotal+((element.producto.precio*(1-(element.producto.descuento/100)))*element.cantidad)
-        }
-        console.log("🚀 ~ file: Carrito.vue ~ line 272 ~ mounted ~ element.cantidad", element.cantidad)
-        console.log("🚀 ~ file: Carrito.vue ~ line 272 ~ mounted ~ element.producto.precio", element.producto.precio)
-    });
-    this.total=auxtotal
-    this.subtotal=auxtotal*0.88
-    this.iva=auxtotal*0.12
+    this.calcularTotal()
   },
   methods: {
+    calcularTotal()
+    {
+        let auxtotal=0;
+        this.cartList.itemsList.forEach(element => {
+
+            console.log("🚀 ~ file: Carrito.vue ~ line 270 ~ mounted ~ element", element)
+            if(element.producto.estado==1)
+            {
+                auxtotal=auxtotal+(element.producto.precio*element.cantidad)
+            }
+            if(element.producto.estado==2)
+            {
+                auxtotal=auxtotal+((element.producto.precio*(1-(element.producto.descuento/100)))*element.cantidad)
+            }
+            console.log("🚀 ~ file: Carrito.vue ~ line 272 ~ mounted ~ element.cantidad", element.cantidad)
+            console.log("🚀 ~ file: Carrito.vue ~ line 272 ~ mounted ~ element.producto.precio", element.producto.precio)
+        });
+        this.total=auxtotal
+        this.subtotal=auxtotal*0.88
+        this.iva=auxtotal*0.12
+    },
+    confirmDelete(producto)
+    {
+        let cartListAux= this.cartList.itemsList;
+        cartListAux.splice(cartListAux.indexOf(producto),1)
+        let cartAux = {
+            itemsList: cartListAux,
+        };
+        this.$store.dispatch("setCartList", cartAux);
+        this.calcularTotal()
+    },
     getUrlFoto(producto) {
       let urlImg = "";
       if (producto.tipo == 0 || producto.tipo == 3) {
@@ -330,7 +345,9 @@ export default {
 
       if(this.authenticated)
       {
-        try {
+        if(this.cartList.itemsList.length>0)
+        {
+            try {
         fetch(process.env.MIX_API_URL + "api/ordenes", {
           method: "POST",
           headers: {
@@ -362,6 +379,11 @@ export default {
       } catch (e) {
         this.$store.dispatch("setAuth", false);
       }
+        }
+        else
+        {
+            this.$buefy.dialog.alert("Agregue productos al carrito");
+        }
       }
       else
       {
@@ -408,6 +430,7 @@ export default {
         itemsList: [],
       };
       this.$store.dispatch("setCartList", cartAux);
+      this.calcularTotal()
     },
     fetchProductos() {
       try {

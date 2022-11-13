@@ -1,10 +1,10 @@
 <template>
     <div class="fullPage">
-        <Nav/>
+        <Nav ref="navBarComponent" />
 
         <div class="appBody" v-bind:class="{ 'fondoLogin': setLoginStyle,'fondoRegister':setRegisterStyle}">
             <div class="mainSection">
-                <router-view/>
+                <router-view @actualizarCategorias="processEmit"/>
             </div>
         </div>
         <Footer/>
@@ -19,6 +19,12 @@ export default {
     components:{
         "Nav":Nav,
         "Footer":Footer
+    },
+    methods:{
+        processEmit(){
+            console.log("emited");
+            this.$refs.navBarComponent.fetchCategorias();
+        }
     },
     data() {
     return {

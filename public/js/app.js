@@ -2074,6 +2074,12 @@ __webpack_require__.r(__webpack_exports__);
     "Nav": _Nav_vue__WEBPACK_IMPORTED_MODULE_0__["default"],
     "Footer": _Footer_vue__WEBPACK_IMPORTED_MODULE_1__["default"]
   },
+  methods: {
+    processEmit: function processEmit() {
+      console.log("emited");
+      this.$refs.navBarComponent.fetchCategorias();
+    }
+  },
   data: function data() {
     return {
       setLoginStyle: false,
@@ -2205,10 +2211,15 @@ __webpack_require__.r(__webpack_exports__);
     return {
       imgSrc: "http://192.168.0.100:8000/" + "imgs/logo.png",
       tablaCategorias: [],
-      inputBuscar: ""
+      inputBuscar: "",
+      inicioText: "Inicio"
     };
   },
+  expose: ['fetchCategorias', "printfFromNav"],
   methods: {
+    printfFromNav: function printfFromNav() {
+      console.log("4444444444444444444444444444444");
+    },
     buscar: function buscar() {
       var buscarParam = this.inputBuscar;
       this.$router.push("/catalogo?buscar=" + buscarParam);
@@ -2296,7 +2307,9 @@ var render = function render() {
 
   return _c("div", {
     staticClass: "fullPage"
-  }, [_c("Nav"), _vm._v(" "), _c("div", {
+  }, [_c("Nav", {
+    ref: "navBarComponent"
+  }), _vm._v(" "), _c("div", {
     staticClass: "appBody",
     "class": {
       fondoLogin: _vm.setLoginStyle,
@@ -2304,7 +2317,11 @@ var render = function render() {
     }
   }, [_c("div", {
     staticClass: "mainSection"
-  }, [_c("router-view")], 1)]), _vm._v(" "), _c("Footer")], 1);
+  }, [_c("router-view", {
+    on: {
+      actualizarCategorias: _vm.processEmit
+    }
+  })], 1)]), _vm._v(" "), _c("Footer")], 1);
 };
 
 var staticRenderFns = [];
@@ -2336,39 +2353,39 @@ var render = function render() {
   }, [_c("div", {
     staticClass: "columns"
   }, [_c("div", {
-    staticClass: "column is-1"
+    staticClass: "column is-3"
   }), _vm._v(" "), _vm._m(0), _vm._v(" "), _c("div", {
-    staticClass: "column is-2"
-  }), _vm._v(" "), _c("div", {
-    staticClass: "column is-2"
-  }, [_c("div", {
-    staticClass: "has-text-left pl-5"
-  }, [_c("p", [_vm._v("Categorías:")]), _vm._v(" "), _vm._l(_vm.tablaCategorias, function (categoria, index) {
-    return _c("p", {
-      key: index
-    }, [_c("router-link", {
-      staticStyle: {
-        color: "#000"
-      },
-      attrs: {
-        to: {
-          path: "/catalogo?categoria=" + categoria.nombre
-        }
-      }
-    }, [_vm._v("\n                    " + _vm._s(categoria.nombre) + "\n                    ")])], 1);
-  })], 2)]), _vm._v(" "), _c("div", {
-    staticClass: "column is-5 has-text-centered"
-  }, [_c("p", [_vm._v("Encuéntranos:")]), _vm._v(" "), _c("p", [_c("b-icon", {
+    staticClass: "column is-4 has-text-left"
+  }, [_c("p", [_vm._v("Encuéntranos:")]), _vm._v(" "), _c("p", [_c("a", {
+    staticStyle: {
+      all: "unset",
+      cursor: "pointer",
+      "margin-bottom": "5px !important"
+    },
+    attrs: {
+      href: "https://www.google.com/maps/place/SRI+Agencia+Norte/@-0.124435,-78.4738357,15.75z/data=!4m5!3m4!1s0x91d5855dd8442ba7:0x9ad481787da29c51!8m2!3d-0.1295124!4d-78.480898",
+      target: "_blank"
+    }
+  }, [_c("b-icon", {
     attrs: {
       icon: "map-marker",
       size: "is-small"
     }
-  }), _vm._v(" Dirección:")], 1), _vm._v(" "), _c("p", [_c("b-icon", {
+  }), _vm._v("  Dirección: Av 10 de agosto y 6 de diciembre")], 1)]), _vm._v(" "), _c("p", [_c("a", {
+    staticStyle: {
+      all: "unset",
+      cursor: "pointer"
+    },
+    attrs: {
+      href: "https://www.instagram.com/unlimited_store_quito/",
+      target: "_blank"
+    }
+  }, [_c("b-icon", {
     attrs: {
       icon: "instagram",
       size: "is-small"
     }
-  }), _vm._v(" @unlimited")], 1)])])])]);
+  }), _vm._v("  @unlimited_store_quito")], 1)])])])])]);
 };
 
 var staticRenderFns = [function () {
@@ -2376,7 +2393,7 @@ var staticRenderFns = [function () {
       _c = _vm._self._c;
 
   return _c("div", {
-    staticClass: "column is-2"
+    staticClass: "column is-4"
   }, [_c("div", {
     staticClass: "has-text-left pl-5"
   }, [_c("p", [_vm._v("Unlimited Store 2022")]), _vm._v(" "), _c("p", [_vm._v("Términos y Condiciones")])])]);

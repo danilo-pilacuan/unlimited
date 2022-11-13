@@ -94,13 +94,13 @@
             <div class="columns">
               <div class="column">
                 <b-field label="Descripción">
-                  <b-input v-model="categoria.descripcion" maxlength="50"></b-input>
+                  <b-input v-model="categoria.descripcion" maxlength="200"></b-input>
                 </b-field>
               </div>
             </div>
 
 
-            <div class="columns">
+            <!-- <div class="columns">
               <div class="column">
                 <b-field label="Estado">
                     <b-select placeholder="Seleccionar Estado" v-model="categoria.estado">
@@ -109,7 +109,7 @@
                     </b-select>
                 </b-field>
               </div>
-            </div>
+            </div> -->
 
 
           </section>
@@ -273,6 +273,10 @@ export default {
               this.tablaDatos = data.respuesta;
               console.log("this.tablaDatos");
               console.log(this.tablaDatos);
+
+
+                this.$emit('actualizarCategorias');
+
             } else {
               //this.$router.push("/login")
               this.tablaDatos = [];
